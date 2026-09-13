@@ -1,0 +1,75 @@
+project:
+  name: ANT
+  status: in_progress
+  current_milestone: M1
+
+features:
+  project_foundation:
+    status: COMPLETE
+    implementation: ".agents/rules/00-hard-rules.md, project-state/"
+    tests: "tests/test_foundation.py"
+    review: true
+    milestone: M0
+
+  office_graph:
+    status: IN_PROGRESS
+    implementation: "backend/app/navigation/models.py, backend/app/navigation/graph.py"
+    tests: "tests/test_graph.py"
+    review: false
+    milestone: M1
+
+  route_engine:
+    status: IN_PROGRESS
+    implementation: "backend/app/navigation/dijkstra.py, backend/app/navigation/instruction.py, backend/app/navigation/state_machine.py"
+    tests: "tests/test_dijkstra.py, tests/test_state_machine.py"
+    review: false
+    milestone: M1
+
+  apriltag_localization:
+    status: NOT_STARTED
+    implementation: null
+    tests: null
+    review: false
+    milestone: M2
+
+  voice_input:
+    status: NOT_STARTED
+    implementation: null
+    tests: null
+    review: false
+    milestone: M3
+
+  text_to_speech:
+    status: NOT_STARTED
+    implementation: null
+    tests: null
+    review: false
+    milestone: M3
+
+  obstacle_detection:
+    status: NOT_STARTED
+    implementation: null
+    tests: null
+    review: false
+    milestone: M4
+
+  integration:
+    status: NOT_STARTED
+    implementation: null
+    tests: null
+    review: false
+    milestone: M5
+
+  demo_mode:
+    status: NOT_STARTED
+    implementation: null
+    tests: null
+    review: false
+    milestone: M6
+
+  red_team_hardening:
+    status: NOT_STARTED
+    implementation: null
+    tests: null
+    review: false
+    milestone: M7
