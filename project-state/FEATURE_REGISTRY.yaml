@@ -1,7 +1,7 @@
 project:
   name: ANT
   status: in_progress
-  current_milestone: M3
+  current_milestone: M4
 
 features:
   project_foundation:
@@ -33,23 +33,23 @@ features:
     milestone: M2
 
   voice_input:
-    status: IN_PROGRESS
+    status: COMPLETE
     implementation: "backend/app/audio/service.py"
     tests: "tests/test_audio.py"
-    review: false
+    review: true
     milestone: M3
 
   text_to_speech:
-    status: IN_PROGRESS
+    status: COMPLETE
     implementation: "backend/app/audio/service.py"
     tests: "tests/test_audio.py"
-    review: false
+    review: true
     milestone: M3
 
   obstacle_detection:
-    status: NOT_STARTED
-    implementation: null
-    tests: null
+    status: IN_PROGRESS
+    implementation: "backend/app/vision/obstacle.py"
+    tests: "tests/test_obstacle.py"
     review: false
     milestone: M4
 

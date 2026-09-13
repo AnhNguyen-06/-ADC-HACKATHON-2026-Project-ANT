@@ -1,9 +1,9 @@
 # Project ANT — Current Project State
 
 **Project**: ANT (Adaptive Navigation Technology)  
-**Current Milestone**: M3 (Audio & Voice Feedback)  
-**Overall Completion**: 50%  
-**Active Sprint**: Sprint 3 — Speech Recognition & Concise Auditory Feedback  
+**Current Milestone**: M4 (Obstacle Detection & Perception)  
+**Overall Completion**: 65%  
+**Active Sprint**: Sprint 4 — Visual Obstacle Classification & Hazard Arbitration  
 **Status**: IN_PROGRESS  
 
 ---
@@ -17,8 +17,8 @@
 | **Office Graph & Models** | COMPLETE | 7 Passed | PASS | None |
 | **Routing Engine (Dijkstra)**| COMPLETE | 13 Passed | PASS | None |
 | **AprilTag Localization** | COMPLETE | 6 Passed | PASS | None |
-| **Audio & Speech (TTS/STT)** | IN_PROGRESS | Developing | Pending M3 | None |
-| **Obstacle Perception** | NOT_STARTED | N/A | Pending M4 | Waiting on M3 completion |
+| **Audio & Speech (TTS/STT)** | COMPLETE | 4 Passed | PASS | None |
+| **Obstacle Perception** | IN_PROGRESS | Developing | Pending M4 | None |
 | **Integration & Web App** | NOT_STARTED | N/A | Pending M5 | Waiting on M4 completion |
 | **Deterministic Demo Mode** | NOT_STARTED | N/A | Pending M6 | Waiting on M5 completion |
 
@@ -28,9 +28,8 @@
 - None.
 
 ## Last Verified Checkpoint
-- `project-state/checkpoints/M2-apriltag.md` (COMPLETE).
+- `project-state/checkpoints/M3-audio.md` (COMPLETE).
 
 ## Recent Commits / Actions
-- Milestone M2 completed: AprilTag 36h11 detector, CameraProvider, TagMapper, and vision-to-state machine integration verified (30/30 tests passing).
-- Resolved BUG-001 (OpenCV 5.0 array shape) and BUG-002 (active route step progression).
-- Initialized Milestone M3: Building SpeechInputProvider and TextToSpeechProvider.
+- Milestone M3 completed: Natural language destination parsing and mock TTS speech feedback verified (34/34 tests passing).
+- Initialized Milestone M4: Developing ObstacleDetector interface, qualitative spatial proximity classifier, and warning arbitration.

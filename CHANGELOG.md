@@ -7,6 +7,17 @@ and this project adheres to Semantic Versioning.
 
 ---
 
+## [0.4.0] - 2026-09-13
+### Added
+- Milestone M3: Audio & Voice Feedback.
+- NaturalLanguageDestinationParser supporting flexible conversational phrasing, preamble stripping, and landmark associations (`backend/app/audio/service.py`).
+- MockTTSProvider and WebTTS bridge models for in-memory and browser speech output.
+- Voice-driven complete navigation simulation lifecycle.
+- 34 unit, component, and regression tests passing.
+- Milestone checkpoint snapshot (`project-state/checkpoints/M3-audio.md`).
+
+---
+
 ## [0.3.0] - 2026-09-13
 ### Added
 - Milestone M2: AprilTag Localization.
@@ -39,7 +50,6 @@ and this project adheres to Semantic Versioning.
 ### Added
 - Static project governance: `.agents/rules/00-hard-rules.md` defining Rules 1 through 17.
 - State management infrastructure: `project-state/STATE.md`, `FEATURE_REGISTRY.yaml`, `CURRENT_SPRINT.md`, `DECISIONS.md`.
-- Architectural decision record ADR-0001.
 - Complete documentation suite (`docs/`).
 - Task management system (`tasks/`).
 - Automated test runner scaffolding with `pytest` and `run_tests.py`.
