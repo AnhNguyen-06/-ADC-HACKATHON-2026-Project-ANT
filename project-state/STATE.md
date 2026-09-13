@@ -1,9 +1,9 @@
 # Project ANT — Current Project State
 
 **Project**: ANT (Adaptive Navigation Technology)  
-**Current Milestone**: M4 (Obstacle Detection & Perception)  
-**Overall Completion**: 65%  
-**Active Sprint**: Sprint 4 — Visual Obstacle Classification & Hazard Arbitration  
+**Current Milestone**: M5 (Full Integration)  
+**Overall Completion**: 78%  
+**Active Sprint**: Sprint 5 — Telemetry Bus & Full Loop Integration  
 **Status**: IN_PROGRESS  
 
 ---
@@ -18,8 +18,8 @@
 | **Routing Engine (Dijkstra)**| COMPLETE | 13 Passed | PASS | None |
 | **AprilTag Localization** | COMPLETE | 6 Passed | PASS | None |
 | **Audio & Speech (TTS/STT)** | COMPLETE | 4 Passed | PASS | None |
-| **Obstacle Perception** | IN_PROGRESS | Developing | Pending M4 | None |
-| **Integration & Web App** | NOT_STARTED | N/A | Pending M5 | Waiting on M4 completion |
+| **Obstacle Perception** | COMPLETE | 5 Passed | PASS | None |
+| **Integration & Web App** | IN_PROGRESS | Developing | Pending M5 | None |
 | **Deterministic Demo Mode** | NOT_STARTED | N/A | Pending M6 | Waiting on M5 completion |
 
 ---
@@ -28,8 +28,8 @@
 - None.
 
 ## Last Verified Checkpoint
-- `project-state/checkpoints/M3-audio.md` (COMPLETE).
+- `project-state/checkpoints/M4-obstacle.md` (COMPLETE).
 
 ## Recent Commits / Actions
-- Milestone M3 completed: Natural language destination parsing and mock TTS speech feedback verified (34/34 tests passing).
-- Initialized Milestone M4: Developing ObstacleDetector interface, qualitative spatial proximity classifier, and warning arbitration.
+- Milestone M4 completed: ObstacleDetector, MockObstacleDetector, and ObstacleWarningEngine fully tested and verified (39/39 tests passing).
+- Initialized Milestone M5: Building WebSocket navigation telemetry service and end-to-end integration loop.

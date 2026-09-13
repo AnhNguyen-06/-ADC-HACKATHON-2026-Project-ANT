@@ -7,6 +7,19 @@ and this project adheres to Semantic Versioning.
 
 ---
 
+## [0.5.0] - 2026-09-13
+### Added
+- Milestone M4: Obstacle Perception & Hazard Arbitration.
+- `ObstacleItem` qualitative proximity schema (`clear`, `ahead`, `near`, `immediate`) and spatial column classification (`left`, `center`, `right`) (`backend/app/vision/obstacle.py`).
+- `MockObstacleDetector` for deterministic offline testing and scenario injection.
+- `LightweightContourObstacleDetector` for edge-device visual centroid hazard evaluation.
+- `ObstacleWarningEngine` prioritizing center-corridor hazards with confidence gating ($\ge 0.60$).
+- State machine integration with directional spoken recovery cues ("Caution: chair ahead. Move slightly left.").
+- 39 unit, component, and regression tests passing with zero warnings.
+- Milestone checkpoint snapshot (`project-state/checkpoints/M4-obstacle.md`).
+
+---
+
 ## [0.4.0] - 2026-09-13
 ### Added
 - Milestone M3: Audio & Voice Feedback.

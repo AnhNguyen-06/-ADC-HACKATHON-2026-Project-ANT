@@ -1,7 +1,7 @@
 project:
   name: ANT
   status: in_progress
-  current_milestone: M4
+  current_milestone: M5
 
 features:
   project_foundation:
@@ -47,16 +47,16 @@ features:
     milestone: M3
 
   obstacle_detection:
-    status: IN_PROGRESS
+    status: COMPLETE
     implementation: "backend/app/vision/obstacle.py"
     tests: "tests/test_obstacle.py"
-    review: false
+    review: true
     milestone: M4
 
   integration:
-    status: NOT_STARTED
-    implementation: null
-    tests: null
+    status: IN_PROGRESS
+    implementation: "backend/app/services/navigation_service.py, backend/app/api/websocket.py"
+    tests: "tests/test_integration.py"
     review: false
     milestone: M5
 
