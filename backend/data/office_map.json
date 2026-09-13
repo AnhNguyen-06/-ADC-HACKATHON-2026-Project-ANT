@@ -1,0 +1,220 @@
+{
+  "name": "ANT Corporate Headquarters - Floor 1",
+  "floor": 1,
+  "nodes": [
+    {
+      "id": "entrance",
+      "name": "Office Entrance",
+      "type": "entrance",
+      "floor": 1,
+      "coordinates": [0.0, 0.0],
+      "tag_id": 1,
+      "landmarks": ["glass_sliding_doors", "welcome_mat"]
+    },
+    {
+      "id": "hallway_junction",
+      "name": "Central Lobby Junction",
+      "type": "junction",
+      "floor": 1,
+      "coordinates": [0.0, 10.0],
+      "tag_id": 2,
+      "landmarks": ["water_cooler"]
+    },
+    {
+      "id": "elevator",
+      "name": "Main Elevators",
+      "type": "elevator",
+      "floor": 1,
+      "coordinates": [10.0, 10.0],
+      "tag_id": 3,
+      "landmarks": ["elevator_call_button", "chime_speaker"]
+    },
+    {
+      "id": "corridor_b",
+      "name": "East Wing Corridor",
+      "type": "corridor",
+      "floor": 1,
+      "coordinates": [10.0, 25.0],
+      "tag_id": 4,
+      "landmarks": ["shared_printer", "recycling_bin"]
+    },
+    {
+      "id": "meeting_b",
+      "name": "Meeting Room B",
+      "type": "meeting_room",
+      "floor": 1,
+      "coordinates": [15.0, 25.0],
+      "tag_id": 12,
+      "landmarks": ["braille_door_sign", "meeting_table"]
+    },
+    {
+      "id": "restroom",
+      "name": "Accessible Restroom",
+      "type": "restroom",
+      "floor": 1,
+      "coordinates": [-6.0, 10.0],
+      "tag_id": 5,
+      "landmarks": ["restroom_tactile_sign"]
+    },
+    {
+      "id": "stairs_east",
+      "name": "East Stairwell",
+      "type": "checkpoint",
+      "floor": 1,
+      "coordinates": [10.0, 5.0],
+      "tag_id": 6,
+      "landmarks": ["fire_door"]
+    },
+    {
+      "id": "cafeteria",
+      "name": "Pantry & Cafeteria",
+      "type": "pantry",
+      "floor": 1,
+      "coordinates": [-15.0, 10.0],
+      "tag_id": 7,
+      "landmarks": ["coffee_machine", "snack_counter"]
+    }
+  ],
+  "edges": [
+    {
+      "from_node": "entrance",
+      "to_node": "hallway_junction",
+      "distance": 10.0,
+      "direction": "forward",
+      "landmark": "water_cooler",
+      "accessible": true,
+      "instruction": "Walk straight ahead toward the central lobby junction.",
+      "blocked": false
+    },
+    {
+      "from_node": "hallway_junction",
+      "to_node": "entrance",
+      "distance": 10.0,
+      "direction": "u_turn",
+      "landmark": "glass_sliding_doors",
+      "accessible": true,
+      "instruction": "Turn around and walk straight toward the office entrance.",
+      "blocked": false
+    },
+    {
+      "from_node": "hallway_junction",
+      "to_node": "elevator",
+      "distance": 10.0,
+      "direction": "right",
+      "landmark": "elevator_call_button",
+      "accessible": true,
+      "instruction": "Turn right and walk toward the elevator lobby.",
+      "blocked": false
+    },
+    {
+      "from_node": "elevator",
+      "to_node": "hallway_junction",
+      "distance": 10.0,
+      "direction": "left",
+      "landmark": "water_cooler",
+      "accessible": true,
+      "instruction": "Walk away from the elevators toward the central junction.",
+      "blocked": false
+    },
+    {
+      "from_node": "elevator",
+      "to_node": "corridor_b",
+      "distance": 15.0,
+      "direction": "left",
+      "landmark": "shared_printer",
+      "accessible": true,
+      "instruction": "Turn left and walk straight down East Wing Corridor toward the printer.",
+      "blocked": false
+    },
+    {
+      "from_node": "corridor_b",
+      "to_node": "elevator",
+      "distance": 15.0,
+      "direction": "u_turn",
+      "landmark": "elevator_call_button",
+      "accessible": true,
+      "instruction": "Walk straight back toward the main elevators.",
+      "blocked": false
+    },
+    {
+      "from_node": "corridor_b",
+      "to_node": "meeting_b",
+      "distance": 5.0,
+      "direction": "right",
+      "landmark": "braille_door_sign",
+      "accessible": true,
+      "instruction": "Turn right. Meeting Room B is on your right side.",
+      "blocked": false
+    },
+    {
+      "from_node": "meeting_b",
+      "to_node": "corridor_b",
+      "distance": 5.0,
+      "direction": "left",
+      "landmark": "shared_printer",
+      "accessible": true,
+      "instruction": "Exit the room and turn left into the corridor.",
+      "blocked": false
+    },
+    {
+      "from_node": "hallway_junction",
+      "to_node": "restroom",
+      "distance": 6.0,
+      "direction": "left",
+      "landmark": "restroom_tactile_sign",
+      "accessible": true,
+      "instruction": "Turn left toward the accessible restroom.",
+      "blocked": false
+    },
+    {
+      "from_node": "restroom",
+      "to_node": "hallway_junction",
+      "distance": 6.0,
+      "direction": "right",
+      "landmark": "water_cooler",
+      "accessible": true,
+      "instruction": "Exit restroom and turn right toward central junction.",
+      "blocked": false
+    },
+    {
+      "from_node": "restroom",
+      "to_node": "cafeteria",
+      "distance": 9.0,
+      "direction": "forward",
+      "landmark": "coffee_machine",
+      "accessible": true,
+      "instruction": "Walk forward toward the cafeteria and pantry.",
+      "blocked": false
+    },
+    {
+      "from_node": "cafeteria",
+      "to_node": "restroom",
+      "distance": 9.0,
+      "direction": "u_turn",
+      "landmark": "restroom_tactile_sign",
+      "accessible": true,
+      "instruction": "Exit cafeteria and walk toward the restroom corridor.",
+      "blocked": false
+    },
+    {
+      "from_node": "elevator",
+      "to_node": "stairs_east",
+      "distance": 5.0,
+      "direction": "right",
+      "landmark": "fire_door",
+      "accessible": false,
+      "instruction": "Take the stairs down.",
+      "blocked": false
+    },
+    {
+      "from_node": "stairs_east",
+      "to_node": "elevator",
+      "distance": 5.0,
+      "direction": "left",
+      "landmark": "elevator_call_button",
+      "accessible": false,
+      "instruction": "Climb the stairs up to the elevator lobby.",
+      "blocked": false
+    }
+  ]
+}

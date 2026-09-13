@@ -1,7 +1,7 @@
 project:
   name: ANT
   status: in_progress
-  current_milestone: M1
+  current_milestone: M2
 
 features:
   project_foundation:
@@ -12,23 +12,23 @@ features:
     milestone: M0
 
   office_graph:
-    status: IN_PROGRESS
-    implementation: "backend/app/navigation/models.py, backend/app/navigation/graph.py"
+    status: COMPLETE
+    implementation: "backend/app/navigation/models.py, backend/app/navigation/graph.py, backend/data/office_map.json"
     tests: "tests/test_graph.py"
-    review: false
+    review: true
     milestone: M1
 
   route_engine:
-    status: IN_PROGRESS
+    status: COMPLETE
     implementation: "backend/app/navigation/dijkstra.py, backend/app/navigation/instruction.py, backend/app/navigation/state_machine.py"
-    tests: "tests/test_dijkstra.py, tests/test_state_machine.py"
-    review: false
+    tests: "tests/test_dijkstra.py, tests/test_instruction.py, tests/test_state_machine.py"
+    review: true
     milestone: M1
 
   apriltag_localization:
-    status: NOT_STARTED
-    implementation: null
-    tests: null
+    status: IN_PROGRESS
+    implementation: "backend/app/vision/camera.py, backend/app/vision/detector.py, backend/app/vision/mapper.py"
+    tests: "tests/test_apriltag.py"
     review: false
     milestone: M2
 
