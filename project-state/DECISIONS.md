@@ -50,3 +50,17 @@ This log records major architecture, design, and governance decisions made durin
   - Add quick landmark preset chips (`Meeting Room B`, `Elevators`, `Restroom`, `Cafeteria`) for one-tap navigation initiation and real-time audio waveform activity animation.
 - **Rationale**: Eliminates "AI sludge" aesthetic, elevating the prototype to an authentic, premium assistive device with WCAG AAA compliance.
 - **Status**: APPROVED
+
+---
+
+## DEC-0005: Modern White & Blue Theme and Split-Cockpit Architecture
+- **Date**: 2026-09-13
+- **Context**: The user requested transitioning from the dark blue/black palette to a modern White & Blue theme, replacing the contrast button with a Light/Dark theme toggle, and improving the layout hierarchy.
+- **Decision**:
+  - Default Theme: Modern White & Electric Blue (`#f8fafc` canvas, `#ffffff` panels, `#2563eb` Royal Blue accents, `#f0f7ff` ice guidance card).
+  - Dark Theme: Deep Obsidian Navy (`#070a12` canvas, `#0f1628` panels, `#3b82f6` accents).
+  - Theme Switcher: Replaced the contrast button with an accessible Light/Dark toggle (`#btn-theme-toggle`), persisted via `localStorage`, triggered via click or hotkey `T` / `H`.
+  - Balanced Split-Cockpit Layout: Arranged the Optical Viewport and CAD Floorplan side-by-side (`.cockpit-split-grid`) above the full-width stage transport bar, eliminating vertical scrolling on 1080p displays.
+  - Mixed Typography System: Combined `Outfit` (display), `Plus Jakarta Sans` (speech & body), `Space Grotesk` (action headlines), and `JetBrains Mono` (telemetry & coordinates).
+- **Rationale**: Elevates visual appeal, enhances ergonomics, and provides a crisp, modern assistive terminal experience while preserving 100% WCAG accessibility.
+- **Status**: APPROVED

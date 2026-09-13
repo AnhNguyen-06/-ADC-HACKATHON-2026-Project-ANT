@@ -36,4 +36,5 @@
 - Impeccable UI/UX overhaul deployed: Replaced generic "AI" styling with authentic tactile assistive terminal design.
 - Added quick landmark preset chips, animated audio waveform, authored SVGs, and collision-free CAD blueprint floorplan.
 - Authored full 0–10 heuristic critique report in `docs/reviews/IMPECCABLE_CRITIQUE.md`.
-- Browser subagent verified live UI rendering, accessibility toggles, and scenario runner.
+- Released Modern White & Blue Theme as default, Light/Dark mode toggle, and balanced split-cockpit layout.
+- Verified in browser with full-page screenshots in both Light and Dark modes.

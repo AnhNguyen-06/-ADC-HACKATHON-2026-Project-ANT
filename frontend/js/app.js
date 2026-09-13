@@ -1,7 +1,8 @@
 /**
  * Project ANT - Frontend Controller
  * Manages WebSocket telemetry, Web Speech API, Web Audio Earcons, Waveform Visualizer,
- * Landmark Chips, and Spatial Navigation Cockpit Visualization.
+ * Landmark Chips, Theme Switching (Modern White & Blue vs Obsidian Dark),
+ * and Spatial Navigation Cockpit Visualization.
  */
 
 class AntApp {
@@ -20,6 +21,7 @@ class AntApp {
     this.currentLocation = null;
     this.activeRoute = null;
 
+    this.initTheme();
     this.initAudioContext();
     this.initSpeechRecognition();
     this.initElements();
@@ -28,6 +30,33 @@ class AntApp {
     this.initEventListeners();
     this.connectWebSocket();
     this.loadMapTopology();
+  }
+
+  initTheme() {
+    const saved = localStorage.getItem('ant-theme') || 'light';
+    this.setTheme(saved);
+
+    const toggleBtn = document.getElementById('btn-theme-toggle') || document.getElementById('btn-high-contrast');
+    toggleBtn?.addEventListener('click', () => {
+      const isDark = document.body.classList.contains('theme-dark');
+      this.setTheme(isDark ? 'light' : 'dark');
+    });
+  }
+
+  setTheme(theme) {
+    const text = document.getElementById('theme-text');
+    if (theme === 'dark') {
+      document.body.classList.remove('theme-light');
+      document.body.classList.add('theme-dark');
+      localStorage.setItem('ant-theme', 'dark');
+      if (text) text.textContent = 'Light Mode';
+    } else {
+      document.body.classList.remove('theme-dark');
+      document.body.classList.add('theme-light');
+      localStorage.setItem('ant-theme', 'light');
+      if (text) text.textContent = 'Dark Mode';
+    }
+    this.renderMap();
   }
 
   initAudioContext() {
@@ -251,13 +280,14 @@ class AntApp {
 
     ctx.clearRect(0, 0, w, h);
 
+    const isDark = document.body.classList.contains('theme-dark');
     const numBars = 16;
     const barWidth = 4;
     const gap = (w - numBars * barWidth) / (numBars - 1);
 
     for (let i = 0; i < numBars; i++) {
       let barHeight = 4;
-      let color = '#334155';
+      let color = isDark ? '#334155' : '#cbd5e1';
 
       if (this.audioState === 'speaking') {
         // Dynamic dancing voice bars
@@ -265,18 +295,18 @@ class AntApp {
         const norm = Math.sin(this.waveTick * 3 + offset) * 0.5 + 0.5;
         const norm2 = Math.cos(this.waveTick * 1.8 + offset * 0.7) * 0.5 + 0.5;
         barHeight = 4 + (norm * 0.6 + norm2 * 0.4) * (h - 8);
-        color = '#38bdf8'; // Sky cyan
+        color = isDark ? '#38bdf8' : '#2563eb'; // Cyan in dark, Royal Blue in light
       } else if (this.audioState === 'listening') {
         // Active listening amber bars
         const offset = i * 0.65;
         const norm = Math.sin(this.waveTick * 4 + offset) * 0.5 + 0.5;
         barHeight = 4 + norm * (h - 6);
-        color = '#fbbf24'; // Amber
+        color = isDark ? '#fbbf24' : '#d97706'; // Amber
       } else {
         // Resting ambient subtle pulse
         const pulse = Math.sin(this.waveTick * 0.8 + i * 0.25) * 0.5 + 0.5;
         barHeight = 3 + pulse * 3.5;
-        color = '#10b981'; // Emerald ready
+        color = isDark ? '#10b981' : '#059669'; // Emerald ready
       }
 
       const x = i * (barWidth + gap);
@@ -348,11 +378,6 @@ class AntApp {
     // Mode toggle
     document.getElementById('btn-mode-toggle')?.addEventListener('click', () => this.toggleMode());
 
-    // High Contrast toggle
-    document.getElementById('btn-high-contrast')?.addEventListener('click', () => {
-      document.body.classList.toggle('high-contrast');
-    });
-
     // Talk button
     document.getElementById('btn-mic-talk')?.addEventListener('click', () => this.toggleMicrophone());
 
@@ -394,15 +419,17 @@ class AntApp {
         e.preventDefault();
         this.resetUI();
         this.sendWebSocketMessage({ type: 'reset' });
-      } else if (e.key === 'h' || e.key === 'H') {
-        document.body.classList.toggle('high-contrast');
+      } else if (e.key === 't' || e.key === 'T' || e.key === 'h' || e.key === 'H') {
+        // Toggle theme between Light and Dark
+        const isDark = document.body.classList.contains('theme-dark');
+        this.setTheme(isDark ? 'light' : 'dark');
       }
     });
   }
 
   toggleMode() {
     this.mode = this.mode === 'DEMO' ? 'REAL' : 'DEMO';
-    const indicator = document.querySelector('.mode-indicator');
+    const indicator = document.querySelector('.mode-indicator') || document.querySelector('.mode-pill');
     const text = document.getElementById('mode-text');
     if (this.mode === 'REAL') {
       indicator?.classList.remove('demo');
@@ -499,14 +526,14 @@ class AntApp {
   }
 
   updateConnectionStatus(connected) {
-    const dot = document.querySelector('.status-dot');
-    const text = document.querySelector('.connection-status .status-text');
+    const beacon = document.querySelector('.status-beacon') || document.querySelector('.status-dot');
+    const label = document.querySelector('.connection-status .status-label') || document.querySelector('.connection-status .status-text');
     if (connected) {
-      dot?.classList.add('connected');
-      if (text) text.textContent = 'Connected';
+      beacon?.classList.add('connected');
+      if (label) label.textContent = 'ONLINE';
     } else {
-      dot?.classList.remove('connected');
-      if (text) text.textContent = 'Disconnected';
+      beacon?.classList.remove('connected');
+      if (label) label.textContent = 'OFFLINE';
     }
   }
 
@@ -605,6 +632,7 @@ class AntApp {
   renderMap() {
     if (!this.svgMap || !this.mapData) return;
 
+    const isDark = document.body.classList.contains('theme-dark');
     let svgHtml = '';
 
     // Edges
@@ -612,7 +640,6 @@ class AntApp {
       const u = this.mapData.nodes.find(n => n.id === edge.from_node);
       const v = this.mapData.nodes.find(n => n.id === edge.to_node);
       if (u && v) {
-        // Check if edge is in active route
         let isRouteEdge = false;
         if (this.activeRoute && this.activeRoute.steps) {
           isRouteEdge = this.activeRoute.steps.some(
@@ -620,9 +647,12 @@ class AntApp {
           );
         }
 
-        const color = isRouteEdge ? '#38bdf8' : '#334155';
-        const strokeWidth = isRouteEdge ? '1.8' : '0.8';
-        const dash = isRouteEdge ? 'stroke-dasharray="2,1"' : '';
+        let color = isDark ? '#334155' : '#cbd5e1';
+        if (isRouteEdge) {
+          color = isDark ? '#38bdf8' : '#2563eb';
+        }
+        const strokeWidth = isRouteEdge ? '2.0' : '0.9';
+        const dash = isRouteEdge ? 'stroke-dasharray="3,1.5"' : '';
 
         svgHtml += `<line x1="${u.coordinates[0]}" y1="${u.coordinates[1]}" 
                           x2="${v.coordinates[0]}" y2="${v.coordinates[1]}" 
@@ -631,14 +661,14 @@ class AntApp {
     });
 
     const labelOffsets = {
-      entrance: { dx: 0, dy: -3.2, anchor: 'middle' },
-      hallway_junction: { dx: 0, dy: -3.2, anchor: 'middle' },
-      elevator: { dx: 3.8, dy: -0.8, anchor: 'start' },
-      restroom: { dx: -3.8, dy: -0.8, anchor: 'end' },
-      pantry: { dx: 0, dy: -3.2, anchor: 'middle' },
-      stairs_east: { dx: 3.8, dy: 3.2, anchor: 'start' },
-      corridor_b: { dx: -3.8, dy: 1.0, anchor: 'end' },
-      meeting_b: { dx: 0, dy: 4.2, anchor: 'middle' }
+      entrance: { dx: 0, dy: -3.4, anchor: 'middle' },
+      hallway_junction: { dx: 0, dy: -3.4, anchor: 'middle' },
+      elevator: { dx: 4.0, dy: 3.4, anchor: 'start' },
+      restroom: { dx: 0, dy: 4.2, anchor: 'middle' },
+      pantry: { dx: 0, dy: -3.4, anchor: 'middle' },
+      stairs_east: { dx: 4.0, dy: -2.2, anchor: 'start' },
+      corridor_b: { dx: -4.0, dy: 1.0, anchor: 'end' },
+      meeting_b: { dx: 0, dy: 4.4, anchor: 'middle' }
     };
 
     const shortNames = {
@@ -658,32 +688,33 @@ class AntApp {
       const isCurrent = this.currentLocation && this.currentLocation.id === node.id;
       const isDestination = this.activeRoute && this.activeRoute.destination.id === node.id;
 
-      let fillColor = '#1e293b';
-      let strokeColor = '#64748b';
-      let textColor = '#94a3b8';
+      let fillColor = isDark ? '#1e293b' : '#ffffff';
+      let strokeColor = isDark ? '#64748b' : '#94a3b8';
+      let textColor = isDark ? '#94a3b8' : '#475569';
       let r = 2.0;
 
       if (isCurrent) {
-        fillColor = '#10b981';
-        strokeColor = '#34d399';
-        textColor = '#34d399';
+        fillColor = isDark ? '#10b981' : '#059669';
+        strokeColor = isDark ? '#34d399' : '#10b981';
+        textColor = isDark ? '#34d399' : '#059669';
         r = 3.0;
       } else if (isDestination) {
-        fillColor = '#38bdf8';
-        strokeColor = '#0284c7';
-        textColor = '#38bdf8';
+        fillColor = isDark ? '#38bdf8' : '#2563eb';
+        strokeColor = isDark ? '#0284c7' : '#1d4ed8';
+        textColor = isDark ? '#38bdf8' : '#2563eb';
         r = 2.8;
       }
 
-      svgHtml += `<circle cx="${x}" cy="${y}" r="${r}" fill="${fillColor}" stroke="${strokeColor}" stroke-width="0.8" />`;
+      svgHtml += `<circle cx="${x}" cy="${y}" r="${r}" fill="${fillColor}" stroke="${strokeColor}" stroke-width="1" />`;
       if (isCurrent) {
-        svgHtml += `<circle cx="${x}" cy="${y}" r="${r + 2}" fill="none" stroke="#10b981" stroke-width="0.5" opacity="0.6">
+        const pulseColor = isDark ? '#10b981' : '#059669';
+        svgHtml += `<circle cx="${x}" cy="${y}" r="${r + 2}" fill="none" stroke="${pulseColor}" stroke-width="0.6" opacity="0.6">
                       <animate attributeName="r" values="${r};${r + 4};${r}" dur="2s" repeatCount="indefinite"/>
                     </circle>`;
       }
 
       // Offset position and collision-free label
-      const offset = labelOffsets[node.id] || { dx: 0, dy: -3.2, anchor: 'middle' };
+      const offset = labelOffsets[node.id] || { dx: 0, dy: -3.4, anchor: 'middle' };
       const labelText = shortNames[node.id] || node.name;
       const tx = x + offset.dx;
       const ty = y + offset.dy;

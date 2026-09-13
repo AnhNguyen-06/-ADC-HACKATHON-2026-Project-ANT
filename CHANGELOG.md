@@ -7,6 +7,16 @@ and this project adheres to Semantic Versioning.
 
 ---
 
+## [1.2.0] - 2026-09-13
+### Changed
+- **Modern White & Blue Theme (Default)**: Transitioned default palette from dark blue/black to a crisp, clinical-modern White & Electric Blue theme (`#f8fafc` canvas, `#ffffff` elevated panels, `#2563eb` royal blue accents).
+- **Light / Dark Mode Theme Switcher**: Replaced the Contrast button with an accessible, animated Theme Toggle (`#btn-theme-toggle`) with Moon/Sun SVGs and `localStorage` persistence (shortcut key `T` or `H`).
+- **Balanced Cockpit Split-Grid Layout**: Overhauled right-panel layout to place the Optical Sensor Viewport and Architectural CAD Floorplan side-by-side (`.cockpit-split-grid`), fitting the entire interface inside 1080p displays with zero vertical scrolling.
+- **Harmonious Mixed Typography**: Integrated Google Fonts pairing `Outfit` (display headings & titles), `Plus Jakarta Sans` (speech guidance & body), `Space Grotesk` (tactile action headlines), and `JetBrains Mono` (telemetry, coordinates, timers).
+- **Collision-Free CAD Map Offsets**: Refined topological node label anchors to eliminate text overlapping across adjacent corridors.
+
+---
+
 ## [1.1.0] - 2026-09-13
 ### Changed
 - **Impeccable UI/UX Overhaul**: Eliminated generic "AI" tropes (zero-offset neon glows, unicode emojis, ungrounded card stacking).

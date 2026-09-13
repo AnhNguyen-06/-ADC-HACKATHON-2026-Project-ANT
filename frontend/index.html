@@ -7,10 +7,10 @@
   <title>Project ANT | Adaptive Navigation Technology</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
 </head>
-<body class="theme-dark">
+<body class="theme-light">
   <!-- Top Navigation & Control Bar -->
   <header class="app-header" role="banner">
     <div class="header-branding">
@@ -35,18 +35,28 @@
         </button>
       </div>
 
-      <button id="btn-high-contrast" class="btn btn-utility" aria-label="Toggle WCAG AAA High Contrast Mode" title="High Contrast Mode (Hot-key: H)">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <circle cx="12" cy="12" r="10"></circle>
-          <path d="M12 2v20"></path>
-          <path d="M12 2a10 10 0 0 1 0 20z" fill="currentColor"></path>
+      <!-- Light / Dark Mode Toggle (Replaced Contrast Button) -->
+      <button id="btn-theme-toggle" class="btn btn-utility btn-theme" aria-label="Toggle Light and Dark Mode" title="Toggle Theme (Hot-key: T or H)">
+        <svg class="theme-icon icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4"></circle>
+          <path d="M12 2v2"></path>
+          <path d="M12 20v2"></path>
+          <path d="m4.93 4.93 1.41 1.41"></path>
+          <path d="m17.66 17.66 1.41 1.41"></path>
+          <path d="M2 12h2"></path>
+          <path d="M20 12h2"></path>
+          <path d="m6.34 17.66-1.41 1.41"></path>
+          <path d="m19.07 4.93-1.41 1.41"></path>
         </svg>
-        <span class="btn-text">Contrast</span>
+        <svg class="theme-icon icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+        </svg>
+        <span class="btn-text" id="theme-text">Dark Mode</span>
       </button>
 
       <div class="connection-status" id="ws-status" aria-live="polite" title="Telemetry Bus Status">
         <span class="status-beacon connected"></span>
-        <span class="status-label">LOCAL LINK</span>
+        <span class="status-label">ONLINE</span>
       </div>
     </div>
   </header>
@@ -61,7 +71,7 @@
         <span class="audio-state-pill" id="audio-state-pill">AUDIO READY</span>
       </div>
 
-      <!-- High-Definition OLED Guidance Display -->
+      <!-- Spoken Navigation OLED Display Card -->
       <div class="oled-display-card" role="region" aria-label="Spoken Navigation Display">
         <div class="oled-top-bar">
           <span class="badge state-badge" id="nav-state-badge">STANDBY</span>
@@ -93,7 +103,7 @@
           <div class="concentric-ring-wrapper" aria-hidden="true">
             <div class="ring-pulse"></div>
             <div class="physical-pad">
-              <svg class="icon-svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg class="icon-svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
                 <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
                 <line x1="12" y1="19" x2="12" y2="22"></line>
@@ -108,7 +118,7 @@
 
         <button id="btn-repeat-speech" class="tactile-btn tactile-repeat" aria-label="Repeat Last Audio Instruction (Press Enter)">
           <div class="physical-pad small" aria-hidden="true">
-            <svg class="icon-svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="icon-svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
               <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
               <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
@@ -123,7 +133,7 @@
 
       <!-- Fast Landmark Destination Chips (One-Tap Accessible Selection) -->
       <div class="quick-destination-block">
-        <label for="destination-select" class="control-caption">PRESET OFFICE LANDMARKS</label>
+        <label for="destination-select" class="control-caption">QUICK LANDMARK PRESETS</label>
         <div class="chip-row">
           <button class="landmark-chip" data-dest="meeting_b">
             <span class="chip-dot"></span>
@@ -160,13 +170,13 @@
       <div class="hardware-key-strip" role="region" aria-label="Physical Hardware Key Mappings">
         <div class="key-item"><kbd>SPACE</kbd> Talk</div>
         <div class="key-item"><kbd>ENTER</kbd> Repeat</div>
+        <div class="key-item"><kbd>T</kbd> Theme</div>
         <div class="key-item"><kbd>ESC</kbd> Reset</div>
-        <div class="key-item"><kbd>H</kbd> High Contrast</div>
       </div>
 
-      <!-- Clean Stop / E-Brake -->
+      <!-- Clean Stop / Reset Session -->
       <div class="cancel-container">
-        <button id="btn-reset-nav" class="btn btn-ebrake" aria-label="Stop navigation and reset">
+        <button id="btn-reset-nav" class="btn btn-ebrake" aria-label="Stop navigation and reset session">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <rect x="4" y="4" width="16" height="16" rx="2"></rect>
           </svg>
@@ -178,71 +188,74 @@
     <!-- RIGHT PANEL: MISSION CONTROL & SAFETY COCKPIT -->
     <section class="panel cockpit-panel" aria-labelledby="cockpit-heading">
       <div class="panel-eyebrow">
-        <span class="eyebrow-tag">MISSION TELEMETRY & SPATIAL RADAR</span>
-        <span class="telemetry-rate" id="telemetry-rate">60 FPS • LOCAL</span>
+        <span class="eyebrow-tag">SPATIAL TELEMETRY & CAD RADAR</span>
+        <span class="telemetry-rate" id="telemetry-rate">60 FPS • SENSOR BUS READY</span>
       </div>
 
-      <!-- Precision Optical Video Viewport -->
-      <div class="optical-viewport-card">
-        <div class="hud-top-bar">
-          <div class="hud-indicator-group">
-            <span class="hud-rec-dot" aria-hidden="true"></span>
-            <span class="hud-label" id="cam-indicator">OPTICAL SENSOR 01</span>
-          </div>
-          <span class="hud-telemetry-badge" id="tag-readout">STANDBY</span>
-        </div>
-
-        <div class="viewport-stage">
-          <!-- Crosshair Reticle -->
-          <div class="crosshair-layer" aria-hidden="true">
-            <div class="crosshair-ch"></div>
-            <div class="crosshair-cv"></div>
-            <div class="corner-bracket top-left"></div>
-            <div class="corner-bracket top-right"></div>
-            <div class="corner-bracket bottom-left"></div>
-            <div class="corner-bracket bottom-right"></div>
+      <!-- Upper Cockpit Grid: Optical Viewfinder & CAD Map side-by-side -->
+      <div class="cockpit-split-grid">
+        <!-- Precision Optical Video Viewport -->
+        <div class="optical-viewport-card">
+          <div class="hud-top-bar">
+            <div class="hud-indicator-group">
+              <span class="hud-rec-dot" aria-hidden="true"></span>
+              <span class="hud-label" id="cam-indicator">OPTICAL SENSOR 01</span>
+            </div>
+            <span class="hud-telemetry-badge" id="tag-readout">STANDBY</span>
           </div>
 
-          <video id="webcam-video" autoplay playsinline muted style="display:none;"></video>
-          <canvas id="vision-canvas" width="640" height="480" role="img" aria-label="Computer vision video stream with marker bounding boxes"></canvas>
-          
-          <!-- Directional Hazard Awareness HUD -->
-          <div id="obstacle-hud" class="directional-hazard-hud hidden" role="alert">
-            <div class="hazard-symbol" aria-hidden="true">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
-                <line x1="12" y1="9" x2="12" y2="13"></line>
-                <line x1="12" y1="17" x2="12.01" y2="17"></line>
-              </svg>
+          <div class="viewport-stage">
+            <!-- Crosshair Reticle -->
+            <div class="crosshair-layer" aria-hidden="true">
+              <div class="crosshair-ch"></div>
+              <div class="crosshair-cv"></div>
+              <div class="corner-bracket top-left"></div>
+              <div class="corner-bracket top-right"></div>
+              <div class="corner-bracket bottom-left"></div>
+              <div class="corner-bracket bottom-right"></div>
             </div>
-            <div class="hazard-text-group">
-              <strong id="hazard-title">HAZARD IN PATHWAY</strong>
-              <span id="hazard-details">CHAIR DETECTED • CENTER CORRIDOR</span>
-            </div>
-            <div class="hazard-vector" aria-hidden="true">
-              <span class="vector-arrow">⭠</span>
-              <span class="vector-text">MOVE LEFT</span>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <!-- Architectural CAD Blueprint Map Visualizer -->
-      <div class="cad-map-card">
-        <div class="cad-header">
-          <div class="cad-title-group">
-            <span class="cad-title">TOPOLOGICAL FLOORPLAN</span>
-            <span class="cad-sub">LEVEL 1 • ACCESSIBLE CORRIDORS</span>
-          </div>
-          <div class="cad-stats">
-            <span class="stat-pill" id="route-length-badge">Path: 0.0m</span>
+            <video id="webcam-video" autoplay playsinline muted style="display:none;"></video>
+            <canvas id="vision-canvas" width="640" height="480" role="img" aria-label="Computer vision video stream with marker bounding boxes"></canvas>
+            
+            <!-- Directional Hazard Awareness HUD -->
+            <div id="obstacle-hud" class="directional-hazard-hud hidden" role="alert">
+              <div class="hazard-symbol" aria-hidden="true">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+                  <line x1="12" y1="9" x2="12" y2="13"></line>
+                  <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+              </div>
+              <div class="hazard-text-group">
+                <strong id="hazard-title">HAZARD IN PATHWAY</strong>
+                <span id="hazard-details">CHAIR DETECTED • CENTER CORRIDOR</span>
+              </div>
+              <div class="hazard-vector" aria-hidden="true">
+                <span class="vector-arrow">⭠</span>
+                <span class="vector-text">MOVE LEFT</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div class="cad-canvas-box">
-          <svg id="office-map-svg" viewBox="-25 -5 50 38" class="cad-svg-element">
-            <!-- Dynamically populated by app.js -->
-          </svg>
+        <!-- Architectural CAD Blueprint Map Visualizer -->
+        <div class="cad-map-card">
+          <div class="cad-header">
+            <div class="cad-title-group">
+              <span class="cad-title">TOPOLOGICAL FLOORPLAN</span>
+              <span class="cad-sub">LEVEL 1 • ACCESSIBLE CORRIDORS</span>
+            </div>
+            <div class="cad-stats">
+              <span class="stat-pill" id="route-length-badge">Route: 0m</span>
+            </div>
+          </div>
+
+          <div class="cad-canvas-box">
+            <svg id="office-map-svg" viewBox="-25 -5 50 38" class="cad-svg-element">
+              <!-- Dynamically populated by app.js -->
+            </svg>
+          </div>
         </div>
       </div>
 
