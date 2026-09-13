@@ -23,28 +23,37 @@ class NaturalLanguageDestinationParser(SpeechInputProvider):
     }
 
     def parse_destination(self, transcript: str, candidate_nodes: List[Node]) -> Optional[str]:
-        if not transcript:
+        if not transcript or not transcript.strip():
             return None
 
         clean_text = transcript.lower().strip()
         # Remove common preamble phrases
-        clean_text = re.sub(r"^(please\s+)?(take\s+me\s+to|navigate\s+to|go\s+to|head\s+to|i\s+want\s+to\s+go\s+to|guide\s+me\s+to|find\s+me|find)\s+", "", clean_text)
-        clean_text = re.sub(r"^(the|a|an)\s+", "", clean_text)
+        clean_text = re.sub(
+            r"^(please\s+)?(take\s+me\s+to|navigate\s+to|go\s+to|head\s+to|i\s+want\s+to\s+go\s+to|guide\s+me\s+to|find\s+me|find)\s+",
+            "",
+            clean_text
+        )
+        clean_text = re.sub(r"^(the|a|an)\s+", "", clean_text).strip()
+
+        # Guard against empty string after preamble removal
+        if not clean_text or len(clean_text) < 2:
+            return None
 
         # 1. Exact node id match
         for node in candidate_nodes:
             if clean_text == node.id.lower():
                 return node.id
 
-        # 2. Exact node name match
+        # 2. Exact or substring node name match (with length guard)
         for node in candidate_nodes:
-            if clean_text == node.name.lower() or clean_text in node.name.lower():
+            node_name_lower = node.name.lower()
+            if clean_text == node_name_lower or (len(clean_text) >= 3 and clean_text in node_name_lower):
                 return node.id
 
         # 3. Synonym dictionary match
         for node_id, synonyms in self.SYNONYM_MAP.items():
             for syn in synonyms:
-                if syn in clean_text or clean_text in syn:
+                if syn == clean_text or (len(clean_text) >= 3 and syn in clean_text):
                     # Verify node_id exists in candidates
                     if any(n.id == node_id for n in candidate_nodes):
                         return node_id

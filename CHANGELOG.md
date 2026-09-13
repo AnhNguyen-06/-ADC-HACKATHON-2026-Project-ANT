@@ -7,6 +7,20 @@ and this project adheres to Semantic Versioning.
 
 ---
 
+## [0.8.0] - 2026-09-13
+### Added
+- Milestone M7: Red-Team Hardening & Fault Injection.
+- Comprehensive red-team failure test suite (`tests/test_red_team.py`).
+- Resilience guards for complete sensor blackout, extreme glare, and static sensor noise.
+- Mid-journey severed path handling and automatic rerouting fallback.
+- Malicious payload, buffer overflow, and fuzz query protections.
+- Repository-wide credential leak and secret scanning test.
+- Discovered, logged, and verified BUG-003 (destination parser empty string guard).
+- 52 automated tests passing with zero failures.
+- Milestone checkpoint snapshot (`project-state/checkpoints/M7-redteam.md`).
+
+---
+
 ## [0.7.0] - 2026-09-13
 ### Added
 - Milestone M6: Web Application & Deterministic Demo Mode.

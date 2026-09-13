@@ -1,9 +1,9 @@
 # Project ANT — Current Project State
 
 **Project**: ANT (Adaptive Navigation Technology)  
-**Current Milestone**: M7 (Red-Team Hardening & Fault Injection)  
-**Overall Completion**: 92%  
-**Active Sprint**: Sprint 7 — Red-Team Stress Testing & Robustness  
+**Current Milestone**: M8 (Final Quality Gate & Hackathon Demo Preparation)  
+**Overall Completion**: 98%  
+**Active Sprint**: Sprint 8 — Packaging, Verification & Walkthrough  
 **Status**: IN_PROGRESS  
 
 ---
@@ -21,7 +21,7 @@
 | **Obstacle Perception** | COMPLETE | 5 Passed | PASS | None |
 | **Integration & Telemetry** | COMPLETE | 2 Passed | PASS | None |
 | **Web UI & Demo Mode** | COMPLETE | 3 Passed | PASS | None |
-| **Red Team Hardening** | IN_PROGRESS | Developing | Pending M7 | None |
+| **Red Team Hardening** | COMPLETE | 8 Passed | PASS | None |
 
 ---
 
@@ -29,8 +29,8 @@
 - None.
 
 ## Last Verified Checkpoint
-- `project-state/checkpoints/M6-demo.md` (COMPLETE).
+- `project-state/checkpoints/M7-redteam.md` (COMPLETE).
 
 ## Recent Commits / Actions
-- Milestone M6 completed: Web application, accessible design system, live map, and 60-second deterministic stage demo verified (44/44 tests passing).
-- Initialized Milestone M7: Red-Team stress testing, sensor blackout recovery, severed route handling, and edge-case hardening.
+- Milestone M7 completed: Red-Team stress testing passed (52/52 tests passing). Resolved BUG-003. Security & privacy audit passed.
+- Initialized Milestone M8: Executing final quality gate, end-to-end rehearsal, and documentation walkthrough.

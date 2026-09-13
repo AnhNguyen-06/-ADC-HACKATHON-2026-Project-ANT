@@ -36,3 +36,15 @@ Format:
 - **Fix**: Upgraded route step matcher to search ahead in the active route for any forward step matching `node.id`, properly advancing `current_step_index` and announcing the checkpoint.
 - **Regression Test**: `tests/test_apriltag.py::test_end_to_end_vision_to_state_transition`.
 - **Status**: VERIFIED
+
+---
+
+## BUG-003: Destination Parser Empty String & Substring False Positive
+- **Date**: 2026-09-13
+- **Severity**: P1 (Major)
+- **Subsystem**: Audio (`backend/app/audio/service.py`)
+- **Symptom**: Blank speech strings, whitespace, or preamble-only input ("please take me to") matched the first node in the candidates list (`entrance`).
+- **Root Cause**: Substring check `clean_text in node.name.lower()` evaluated to `True` for empty string `""` against any target string.
+- **Fix**: Added strict guards: `if not clean_text or len(clean_text) < 2: return None` and required `len(clean_text) >= 3` for substring matching.
+- **Regression Test**: `tests/test_red_team.py::test_red_team_non_existent_and_malicious_destination_queries`.
+- **Status**: VERIFIED

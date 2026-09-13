@@ -1,7 +1,7 @@
 project:
   name: ANT
   status: in_progress
-  current_milestone: M7
+  current_milestone: M8
 
 features:
   project_foundation:
@@ -68,8 +68,8 @@ features:
     milestone: M6
 
   red_team_hardening:
-    status: IN_PROGRESS
+    status: COMPLETE
     implementation: "tests/test_red_team.py"
     tests: "tests/test_red_team.py"
-    review: false
+    review: true
     milestone: M7
