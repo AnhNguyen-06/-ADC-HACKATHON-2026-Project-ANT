@@ -1,7 +1,7 @@
 project:
   name: ANT
   status: in_progress
-  current_milestone: M5
+  current_milestone: M6
 
 features:
   project_foundation:
@@ -54,16 +54,16 @@ features:
     milestone: M4
 
   integration:
-    status: IN_PROGRESS
-    implementation: "backend/app/services/navigation_service.py, backend/app/api/websocket.py"
+    status: COMPLETE
+    implementation: "backend/app/services/navigation_service.py, backend/app/api/websocket.py, backend/app/api/routes.py"
     tests: "tests/test_integration.py"
-    review: false
+    review: true
     milestone: M5
 
   demo_mode:
-    status: NOT_STARTED
-    implementation: null
-    tests: null
+    status: IN_PROGRESS
+    implementation: "frontend/index.html, frontend/css/style.css, frontend/js/app.js, frontend/js/demo_runner.js"
+    tests: "tests/test_demo.py"
     review: false
     milestone: M6
 

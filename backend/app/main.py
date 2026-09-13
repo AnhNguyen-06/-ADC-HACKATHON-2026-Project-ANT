@@ -4,6 +4,8 @@ from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 
 from backend.app.core.config import settings
+from backend.app.api.websocket import router as ws_router
+from backend.app.api.routes import router as api_router
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -18,6 +20,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Mount API and WebSocket routers
+app.include_router(api_router)
+app.include_router(ws_router)
 
 @app.get("/api/health")
 async def health_check():

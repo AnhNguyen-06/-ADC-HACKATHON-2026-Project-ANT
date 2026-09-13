@@ -1,9 +1,9 @@
 # Project ANT — Current Project State
 
 **Project**: ANT (Adaptive Navigation Technology)  
-**Current Milestone**: M5 (Full Integration)  
-**Overall Completion**: 78%  
-**Active Sprint**: Sprint 5 — Telemetry Bus & Full Loop Integration  
+**Current Milestone**: M6 (Web Application & Deterministic Demo Mode)  
+**Overall Completion**: 85%  
+**Active Sprint**: Sprint 6 — Accessible UI & Deterministic Demo Cockpit  
 **Status**: IN_PROGRESS  
 
 ---
@@ -19,8 +19,9 @@
 | **AprilTag Localization** | COMPLETE | 6 Passed | PASS | None |
 | **Audio & Speech (TTS/STT)** | COMPLETE | 4 Passed | PASS | None |
 | **Obstacle Perception** | COMPLETE | 5 Passed | PASS | None |
-| **Integration & Web App** | IN_PROGRESS | Developing | Pending M5 | None |
-| **Deterministic Demo Mode** | NOT_STARTED | N/A | Pending M6 | Waiting on M5 completion |
+| **Integration & Telemetry** | COMPLETE | 2 Passed | PASS | None |
+| **Web UI & Demo Mode** | IN_PROGRESS | Developing | Pending M6 | None |
+| **Red Team Hardening** | NOT_STARTED | N/A | Pending M7 | Waiting on M6 completion |
 
 ---
 
@@ -28,8 +29,8 @@
 - None.
 
 ## Last Verified Checkpoint
-- `project-state/checkpoints/M4-obstacle.md` (COMPLETE).
+- `project-state/checkpoints/M5-integration.md` (COMPLETE).
 
 ## Recent Commits / Actions
-- Milestone M4 completed: ObstacleDetector, MockObstacleDetector, and ObstacleWarningEngine fully tested and verified (39/39 tests passing).
-- Initialized Milestone M5: Building WebSocket navigation telemetry service and end-to-end integration loop.
+- Milestone M5 completed: NavigationService, WebSocket telemetry bus, and end-to-end integration verified (41/41 tests passing).
+- Initialized Milestone M6: Building accessible web UI (audio-first user area + judge debug cockpit) and deterministic 60-second demo script.

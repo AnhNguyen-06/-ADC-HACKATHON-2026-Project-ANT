@@ -7,6 +7,18 @@ and this project adheres to Semantic Versioning.
 
 ---
 
+## [0.6.0] - 2026-09-13
+### Added
+- Milestone M5: Full Integration & Telemetry Bus.
+- `NavigationService` unified coordinator (`backend/app/services/navigation_service.py`).
+- WebSocket streaming endpoint `/ws/navigation` (`backend/app/api/websocket.py`).
+- REST endpoints for nodes, map topology, and voice navigation (`backend/app/api/routes.py`).
+- Full navigation lifecycle integration test via WebSocket client (`tests/test_integration.py`).
+- 41 unit, component, and integration tests passing.
+- Milestone checkpoint snapshot (`project-state/checkpoints/M5-integration.md`).
+
+---
+
 ## [0.5.0] - 2026-09-13
 ### Added
 - Milestone M4: Obstacle Perception & Hazard Arbitration.
