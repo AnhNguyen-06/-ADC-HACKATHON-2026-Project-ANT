@@ -1,6 +1,7 @@
 /**
  * Project ANT - Frontend Controller
- * Manages WebSocket telemetry, Web Speech API, Web Audio Earcons, and Cockpit Visualization.
+ * Manages WebSocket telemetry, Web Speech API, Web Audio Earcons, Waveform Visualizer,
+ * Landmark Chips, and Spatial Navigation Cockpit Visualization.
  */
 
 class AntApp {
@@ -11,6 +12,9 @@ class AntApp {
     this.synth = window.speechSynthesis || null;
     this.recognition = null;
     this.isRecording = false;
+    this.isSpeaking = false;
+    this.audioState = 'ready'; // 'ready', 'speaking', 'listening'
+    this.waveTick = 0;
     this.lastInstruction = '';
     this.mapData = null;
     this.currentLocation = null;
@@ -19,6 +23,8 @@ class AntApp {
     this.initAudioContext();
     this.initSpeechRecognition();
     this.initElements();
+    this.initWaveform();
+    this.initLandmarkChips();
     this.initEventListeners();
     this.connectWebSocket();
     this.loadMapTopology();
@@ -91,6 +97,15 @@ class AntApp {
     }
   }
 
+  setAudioState(state, label) {
+    this.audioState = state;
+    const pill = document.getElementById('audio-state-pill');
+    if (pill) {
+      pill.textContent = label;
+      pill.className = `audio-state-pill ${state}`;
+    }
+  }
+
   speak(text) {
     if (!text) return;
     this.lastInstruction = text;
@@ -101,13 +116,35 @@ class AntApp {
     const aria = document.getElementById('aria-live-polite');
     if (aria) aria.textContent = text;
 
+    this.isSpeaking = true;
+    this.setAudioState('speaking', 'SPEAKING CUE');
+
     // Use native Web Speech Synthesis if available
     if (this.synth) {
       this.synth.cancel(); // Stop any pending speech
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.rate = 1.05; // Slightly brisk for efficient navigation
       utterance.pitch = 1.0;
+      utterance.onend = () => {
+        this.isSpeaking = false;
+        if (!this.isRecording) {
+          this.setAudioState('ready', 'AUDIO READY');
+        }
+      };
+      utterance.onerror = () => {
+        this.isSpeaking = false;
+        if (!this.isRecording) {
+          this.setAudioState('ready', 'AUDIO READY');
+        }
+      };
       this.synth.speak(utterance);
+    } else {
+      setTimeout(() => {
+        this.isSpeaking = false;
+        if (!this.isRecording) {
+          this.setAudioState('ready', 'AUDIO READY');
+        }
+      }, 3000);
     }
   }
 
@@ -134,6 +171,7 @@ class AntApp {
 
       this.recognition.onerror = (event) => {
         console.warn("Speech recognition error:", event.error);
+        this.isRecording = false;
         this.updateMicUI(false);
       };
 
@@ -176,9 +214,11 @@ class AntApp {
     if (recording) {
       btn?.classList.add('recording');
       if (text) text.textContent = 'Listening...';
+      this.setAudioState('listening', 'LISTENING...');
     } else {
       btn?.classList.remove('recording');
-      if (text) text.textContent = 'Tap to Speak';
+      if (text) text.textContent = 'Voice Command';
+      this.setAudioState('ready', 'AUDIO READY');
     }
   }
 
@@ -186,6 +226,122 @@ class AntApp {
     this.canvas = document.getElementById('vision-canvas');
     this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
     this.svgMap = document.getElementById('office-map-svg');
+  }
+
+  initWaveform() {
+    this.waveformCanvas = document.getElementById('waveform-canvas');
+    if (!this.waveformCanvas) return;
+    this.waveCtx = this.waveformCanvas.getContext('2d');
+    this.audioState = 'ready';
+    this.waveTick = 0;
+
+    const render = () => {
+      this.drawWaveform();
+      requestAnimationFrame(render);
+    };
+    requestAnimationFrame(render);
+  }
+
+  drawWaveform() {
+    if (!this.waveCtx || !this.waveformCanvas) return;
+    const ctx = this.waveCtx;
+    const w = this.waveformCanvas.width;
+    const h = this.waveformCanvas.height;
+    this.waveTick += 0.08;
+
+    ctx.clearRect(0, 0, w, h);
+
+    const numBars = 16;
+    const barWidth = 4;
+    const gap = (w - numBars * barWidth) / (numBars - 1);
+
+    for (let i = 0; i < numBars; i++) {
+      let barHeight = 4;
+      let color = '#334155';
+
+      if (this.audioState === 'speaking') {
+        // Dynamic dancing voice bars
+        const offset = i * 0.45;
+        const norm = Math.sin(this.waveTick * 3 + offset) * 0.5 + 0.5;
+        const norm2 = Math.cos(this.waveTick * 1.8 + offset * 0.7) * 0.5 + 0.5;
+        barHeight = 4 + (norm * 0.6 + norm2 * 0.4) * (h - 8);
+        color = '#38bdf8'; // Sky cyan
+      } else if (this.audioState === 'listening') {
+        // Active listening amber bars
+        const offset = i * 0.65;
+        const norm = Math.sin(this.waveTick * 4 + offset) * 0.5 + 0.5;
+        barHeight = 4 + norm * (h - 6);
+        color = '#fbbf24'; // Amber
+      } else {
+        // Resting ambient subtle pulse
+        const pulse = Math.sin(this.waveTick * 0.8 + i * 0.25) * 0.5 + 0.5;
+        barHeight = 3 + pulse * 3.5;
+        color = '#10b981'; // Emerald ready
+      }
+
+      const x = i * (barWidth + gap);
+      const y = (h - barHeight) / 2;
+
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      if (typeof ctx.roundRect === 'function') {
+        ctx.roundRect(x, y, barWidth, barHeight, 2);
+      } else {
+        ctx.rect(x, y, barWidth, barHeight);
+      }
+      ctx.fill();
+    }
+  }
+
+  initLandmarkChips() {
+    const chips = document.querySelectorAll('.landmark-chip');
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        const destId = chip.dataset.dest;
+        if (destId) {
+          chips.forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+
+          const select = document.getElementById('destination-select');
+          if (select) select.value = destId;
+
+          this.sendWebSocketMessage({
+            type: 'set_destination',
+            destination_id: destId
+          });
+        }
+      });
+    });
+  }
+
+  updateActiveLandmarkChip(destId) {
+    const chips = document.querySelectorAll('.landmark-chip');
+    chips.forEach(chip => {
+      if (destId && chip.dataset.dest === destId) {
+        chip.classList.add('active');
+      } else {
+        chip.classList.remove('active');
+      }
+    });
+  }
+
+  resetUI() {
+    this.updateActiveLandmarkChip(null);
+    const select = document.getElementById('destination-select');
+    if (select) select.value = '';
+    const destMeta = document.getElementById('destination-meta');
+    if (destMeta) destMeta.textContent = 'None Selected';
+    const locMeta = document.getElementById('location-meta');
+    if (locMeta) locMeta.textContent = 'Unlocalized';
+    const stateBadge = document.getElementById('nav-state-badge');
+    if (stateBadge) {
+      stateBadge.textContent = 'STANDBY';
+      stateBadge.className = 'badge state-badge standby';
+    }
+    const obsHud = document.getElementById('obstacle-hud');
+    if (obsHud) obsHud.classList.add('hidden');
+    const tagReadout = document.getElementById('tag-readout');
+    if (tagReadout) tagReadout.textContent = 'Passive optical ready';
   }
 
   initEventListeners() {
@@ -205,11 +361,12 @@ class AntApp {
       if (this.lastInstruction) this.speak(this.lastInstruction);
     });
 
-    // Destination Select
+    // Destination Select button
     document.getElementById('btn-start-nav')?.addEventListener('click', () => {
       const select = document.getElementById('destination-select');
       const destId = select?.value;
       if (destId) {
+        this.updateActiveLandmarkChip(destId);
         this.sendWebSocketMessage({
           type: 'set_destination',
           destination_id: destId
@@ -219,6 +376,7 @@ class AntApp {
 
     // Reset button
     document.getElementById('btn-reset-nav')?.addEventListener('click', () => {
+      this.resetUI();
       this.sendWebSocketMessage({ type: 'reset' });
     });
 
@@ -234,6 +392,7 @@ class AntApp {
         if (this.lastInstruction) this.speak(this.lastInstruction);
       } else if (e.code === 'Escape') {
         e.preventDefault();
+        this.resetUI();
         this.sendWebSocketMessage({ type: 'reset' });
       } else if (e.key === 'h' || e.key === 'H') {
         document.body.classList.toggle('high-contrast');
@@ -382,14 +541,23 @@ class AntApp {
     // 3. Metadata updates
     const locMeta = document.getElementById('location-meta');
     if (locMeta) {
-      const name = data.current_location ? data.current_location.name : 'Unlocalized';
-      locMeta.innerHTML = `Current: <strong>${name}</strong>`;
+      locMeta.textContent = data.current_location ? data.current_location.name : 'Unlocalized';
     }
 
     const destMeta = document.getElementById('destination-meta');
     if (destMeta) {
-      const name = data.destination ? data.destination.name : 'None';
-      destMeta.innerHTML = `Destination: <strong>${name}</strong>`;
+      destMeta.textContent = data.destination ? data.destination.name : 'None Selected';
+    }
+
+    // Sync landmark chip highlighting and select menu
+    if (data.destination && data.destination.id) {
+      this.updateActiveLandmarkChip(data.destination.id);
+      const select = document.getElementById('destination-select');
+      if (select && select.value !== data.destination.id) {
+        select.value = data.destination.id;
+      }
+    } else if (!data.destination) {
+      this.updateActiveLandmarkChip(null);
     }
 
     // 4. Obstacle HUD
@@ -412,7 +580,7 @@ class AntApp {
       const tagIds = data.detected_tags.map(t => `#${t.tag_id}`).join(', ');
       if (tagReadout) tagReadout.textContent = `Tag ${tagIds} Sighted`;
     } else {
-      if (tagReadout) tagReadout.textContent = 'No tags detected';
+      if (tagReadout) tagReadout.textContent = 'Passive optical ready';
     }
 
     // 6. Update Route and Map
@@ -462,6 +630,28 @@ class AntApp {
       }
     });
 
+    const labelOffsets = {
+      entrance: { dx: 0, dy: -3.2, anchor: 'middle' },
+      hallway_junction: { dx: 0, dy: -3.2, anchor: 'middle' },
+      elevator: { dx: 3.8, dy: -0.8, anchor: 'start' },
+      restroom: { dx: -3.8, dy: -0.8, anchor: 'end' },
+      pantry: { dx: 0, dy: -3.2, anchor: 'middle' },
+      stairs_east: { dx: 3.8, dy: 3.2, anchor: 'start' },
+      corridor_b: { dx: -3.8, dy: 1.0, anchor: 'end' },
+      meeting_b: { dx: 0, dy: 4.2, anchor: 'middle' }
+    };
+
+    const shortNames = {
+      entrance: 'Entrance',
+      hallway_junction: 'Lobby',
+      elevator: 'Elevators',
+      restroom: 'Restroom',
+      pantry: 'Cafeteria',
+      stairs_east: 'Stairs',
+      corridor_b: 'Corridor B',
+      meeting_b: 'Meeting Room B'
+    };
+
     // Nodes
     this.mapData.nodes.forEach(node => {
       const [x, y] = node.coordinates;
@@ -470,15 +660,18 @@ class AntApp {
 
       let fillColor = '#1e293b';
       let strokeColor = '#64748b';
+      let textColor = '#94a3b8';
       let r = 2.0;
 
       if (isCurrent) {
         fillColor = '#10b981';
         strokeColor = '#34d399';
+        textColor = '#34d399';
         r = 3.0;
       } else if (isDestination) {
         fillColor = '#38bdf8';
         strokeColor = '#0284c7';
+        textColor = '#38bdf8';
         r = 2.8;
       }
 
@@ -489,8 +682,13 @@ class AntApp {
                     </circle>`;
       }
 
-      // Label
-      svgHtml += `<text x="${x}" y="${y - 3.2}" font-size="2" fill="#94a3b8" text-anchor="middle" font-family="sans-serif">${node.name}</text>`;
+      // Offset position and collision-free label
+      const offset = labelOffsets[node.id] || { dx: 0, dy: -3.2, anchor: 'middle' };
+      const labelText = shortNames[node.id] || node.name;
+      const tx = x + offset.dx;
+      const ty = y + offset.dy;
+
+      svgHtml += `<text x="${tx}" y="${ty}" font-size="1.5" fill="${textColor}" text-anchor="${offset.anchor}" font-family="'JetBrains Mono', monospace" font-weight="600">${labelText}</text>`;
     });
 
     this.svgMap.innerHTML = svgHtml;
@@ -511,59 +709,124 @@ class AntApp {
 
     // In demo mode or when no real camera feed, render synthesized indoor perspective
     if (this.mode === 'DEMO') {
-      ctx.fillStyle = '#0a0f1d';
+      // Dark optical viewfinder surface
+      ctx.fillStyle = '#060a12';
       ctx.fillRect(0, 0, w, h);
 
-      // Floor grid perspective
-      ctx.strokeStyle = 'rgba(56, 189, 248, 0.1)';
+      // Floor perspective grid lines
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.08)';
       ctx.lineWidth = 1;
       for (let x = 0; x <= w; x += 40) {
         ctx.beginPath();
         ctx.moveTo(x, h);
-        ctx.lineTo(w / 2 + (x - w / 2) * 0.2, h * 0.4);
+        ctx.lineTo(w / 2 + (x - w / 2) * 0.22, h * 0.42);
+        ctx.stroke();
+      }
+
+      // Ceiling perspective lines
+      for (let x = 0; x <= w; x += 40) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(w / 2 + (x - w / 2) * 0.22, h * 0.42);
         ctx.stroke();
       }
 
       // Horizon line
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.18)';
       ctx.beginPath();
-      ctx.moveTo(0, h * 0.4);
-      ctx.lineTo(w, h * 0.4);
+      ctx.moveTo(0, h * 0.42);
+      ctx.lineTo(w, h * 0.42);
       ctx.stroke();
 
-      // If active tag detected, render simulated AprilTag graphic
+      // Optical focal center mark
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(w / 2 - 12, h * 0.42);
+      ctx.lineTo(w / 2 + 12, h * 0.42);
+      ctx.moveTo(w / 2, h * 0.42 - 12);
+      ctx.lineTo(w / 2, h * 0.42 + 12);
+      ctx.stroke();
+
+      // If active tag detected, render simulated AprilTag graphic with precision reticle
       if (this.currentLocation && this.currentLocation.tag_id) {
         const tagId = this.currentLocation.tag_id;
-        const tagX = w * 0.5 - 60;
-        const tagY = h * 0.35;
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(tagX, tagY, 120, 120);
-        ctx.fillStyle = '#000000';
-        ctx.fillRect(tagX + 15, tagY + 15, 90, 90);
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(tagX + 35, tagY + 35, 50, 50);
+        const tagX = w * 0.5 - 55;
+        const tagY = h * 0.36;
+        const tagSize = 110;
 
-        // Bounding box overlay
+        // Tag matrix background
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(tagX, tagY, tagSize, tagSize);
+        ctx.fillStyle = '#0a0f1d';
+        ctx.fillRect(tagX + 12, tagY + 12, tagSize - 24, tagSize - 24);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(tagX + 30, tagY + 30, tagSize - 60, tagSize - 60);
+
+        // Technical Corner Brackets
         ctx.strokeStyle = '#10b981';
-        ctx.lineWidth = 3;
-        ctx.strokeRect(tagX - 5, tagY - 5, 130, 130);
+        ctx.lineWidth = 2.5;
+        const bLen = 14;
+        const pad = 8;
+        const bx1 = tagX - pad;
+        const by1 = tagY - pad;
+        const bx2 = tagX + tagSize + pad;
+        const by2 = tagY + tagSize + pad;
 
-        ctx.fillStyle = '#10b981';
-        ctx.font = 'bold 14px monospace';
-        ctx.fillText(`AprilTag #${tagId} (${this.currentLocation.name})`, tagX - 10, tagY - 12);
+        // Top-left
+        ctx.beginPath();
+        ctx.moveTo(bx1, by1 + bLen); ctx.lineTo(bx1, by1); ctx.lineTo(bx1 + bLen, by1);
+        ctx.stroke();
+        // Top-right
+        ctx.beginPath();
+        ctx.moveTo(bx2 - bLen, by1); ctx.lineTo(bx2, by1); ctx.lineTo(bx2, by1 + bLen);
+        ctx.stroke();
+        // Bottom-left
+        ctx.beginPath();
+        ctx.moveTo(bx1, by2 - bLen); ctx.lineTo(bx1, by2); ctx.lineTo(bx1 + bLen, by2);
+        ctx.stroke();
+        // Bottom-right
+        ctx.beginPath();
+        ctx.moveTo(bx2 - bLen, by2); ctx.lineTo(bx2, by2); ctx.lineTo(bx2, by2 - bLen);
+        ctx.stroke();
+
+        // High-contrast HUD tag banner
+        ctx.fillStyle = 'rgba(16, 185, 129, 0.9)';
+        ctx.fillRect(bx1, by1 - 24, 180, 20);
+        ctx.fillStyle = '#040711';
+        ctx.font = 'bold 11px "JetBrains Mono", monospace';
+        ctx.fillText(`APRILTAG #${tagId} LOCK`, bx1 + 6, by1 - 10);
+
+        // Location label
+        ctx.fillStyle = '#34d399';
+        ctx.font = '600 12px "Plus Jakarta Sans", sans-serif';
+        ctx.fillText(`${this.currentLocation.name}`, bx1, by2 + 18);
       }
 
-      // If obstacle present, render obstacle marker
+      // If obstacle present, render tactical hazard marker
       if (activeObstacle) {
-        const obsX = activeObstacle.position === 'left' ? w * 0.25 : (activeObstacle.position === 'right' ? w * 0.75 : w * 0.5);
-        const obsY = h * 0.65;
-        ctx.strokeStyle = '#ef4444';
-        ctx.lineWidth = 3;
-        ctx.strokeRect(obsX - 50, obsY - 50, 100, 100);
+        const obsX = activeObstacle.position === 'left' ? w * 0.28 : (activeObstacle.position === 'right' ? w * 0.72 : w * 0.5);
+        const obsY = h * 0.68;
+        const ow = 90;
+        const oh = 90;
 
+        // Semi-transparent alert fill
+        ctx.fillStyle = 'rgba(239, 68, 68, 0.12)';
+        ctx.fillRect(obsX - ow / 2, obsY - oh / 2, ow, oh);
+
+        // Hazard reticle border
+        ctx.strokeStyle = '#ef4444';
+        ctx.lineWidth = 2.5;
+        ctx.strokeRect(obsX - ow / 2, obsY - oh / 2, ow, oh);
+
+        // Hazard Label Banner
         ctx.fillStyle = '#ef4444';
-        ctx.font = 'bold 14px sans-serif';
-        ctx.fillText(`OBSTACLE: ${activeObstacle.class.toUpperCase()}`, obsX - 50, obsY - 60);
+        ctx.fillRect(obsX - ow / 2, obsY - oh / 2 - 22, ow, 20);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 11px "JetBrains Mono", monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(`${activeObstacle.class.toUpperCase()}`, obsX, obsY - oh / 2 - 8);
+        ctx.textAlign = 'start';
       }
     }
   }

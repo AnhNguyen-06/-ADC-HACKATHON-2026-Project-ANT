@@ -36,3 +36,17 @@ This log records major architecture, design, and governance decisions made durin
 - **Decision**: Restrict spoken feedback to short, directive cues ("Turn right", "Walk straight toward the elevator", "Obstacle ahead. Move slightly left", "You have arrived").
 - **Rationale**: Adheres to Rule 7 and Rule 9 (No False Precision, Audio-First Accessibility).
 - **Status**: APPROVED
+
+---
+
+## DEC-0004: Impeccable Design System Overhaul & Elimination of "AI" Clichés
+- **Date**: 2026-09-13
+- **Context**: The initial UI relied on generic AI aesthetic tropes (neon cyan halos with zero offset, unicode emojis for hardware buttons, ungrounded card stacking, generic Inter typography), feeling ungrounded and synthetic.
+- **Decision**:
+  - Adopt the `impeccable` design system philosophy: replace neon sci-fi glows with directional physics-based elevation shadows (`rgba(0,0,0,0.6)` + `rgba(0,0,0,0.4)`), physical inset bevels, and tactile push button spring mechanics (`:active { transform: translateY(2px) }`).
+  - Replace all unicode emojis with authored, accessible geometric inline SVGs.
+  - Implement dual conceptual surfaces: Left panel is a Handheld Tactile Mobility Terminal (giant concentric grooved buttons, OLED status scanlines, high-contrast labels); Right panel is a Spatial Telemetry & CAD Radar Cockpit (CAD blueprint grid, directional vector alerts, optical viewfinder with corner reticle brackets).
+  - Enhance typography with Google Fonts `Plus Jakarta Sans` for humanist clarity and `JetBrains Mono` for precise hardware telemetry.
+  - Add quick landmark preset chips (`Meeting Room B`, `Elevators`, `Restroom`, `Cafeteria`) for one-tap navigation initiation and real-time audio waveform activity animation.
+- **Rationale**: Eliminates "AI sludge" aesthetic, elevating the prototype to an authentic, premium assistive device with WCAG AAA compliance.
+- **Status**: APPROVED

@@ -7,6 +7,22 @@ and this project adheres to Semantic Versioning.
 
 ---
 
+## [1.1.0] - 2026-09-13
+### Changed
+- **Impeccable UI/UX Overhaul**: Eliminated generic "AI" tropes (zero-offset neon glows, unicode emojis, ungrounded card stacking).
+- **Physical Assistive Terminal Design**: Restructured interface into a dual-concept surface featuring a handheld tactile terminal (giant concentric grooved buttons, OLED status scanlines, high-contrast typography) and a spatial CAD radar telemetry cockpit.
+- **Craft Upgrades**:
+  - Replaced all unicode emojis with authored, accessible geometric inline SVGs.
+  - Added physical elevation directional shadows, inset bevels, and tactile spring click physics (`:active { transform: translateY(2px) }`).
+  - Integrated Google Fonts `Plus Jakarta Sans` and `JetBrains Mono` for maximum humanist readability and technical precision.
+  - Added quick landmark preset chips (`Meeting Room B`, `Elevators`, `Restroom`, `Cafeteria`) for one-tap navigation initiation.
+  - Implemented dynamic real-time audio waveform activity visualizer on canvas.
+  - Added precision optical viewfinder reticle with corner brackets and tactical obstacle warning banners.
+  - Optimized CAD SVG floorplan with collision-free, offset node labels.
+- **Audit & Evaluation**: Conducted comprehensive Impeccable review (`docs/reviews/IMPECCABLE_CRITIQUE.md`) scoring each feature from 0–10.
+
+---
+
 ## [1.0.0] - 2026-09-13
 ### Added
 - Milestone M8: Final Hackathon Prototype Completion & Quality Gate.

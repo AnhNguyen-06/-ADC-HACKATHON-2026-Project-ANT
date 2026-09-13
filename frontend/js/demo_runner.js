@@ -108,11 +108,18 @@ class DemoRunner {
 
   startDemo() {
     this.isPlaying = true;
-    if (this.btnPlay) this.btnPlay.textContent = "⏸ Pause Demo";
+    if (this.btnPlay) {
+      this.btnPlay.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg> Pause`;
+    }
     
     // Switch app to Demo Mode
     if (window.antApp && window.antApp.mode !== 'DEMO') {
       window.antApp.toggleMode();
+    }
+
+    if (this.currentStep === 0) {
+      this.executeStep(0);
+      this.currentStep = 1;
     }
 
     this.timerInterval = setInterval(() => {
@@ -134,13 +141,17 @@ class DemoRunner {
 
   pauseDemo() {
     this.isPlaying = false;
-    if (this.btnPlay) this.btnPlay.textContent = "▶ Resume Demo";
+    if (this.btnPlay) {
+      this.btnPlay.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Resume`;
+    }
     if (this.timerInterval) clearInterval(this.timerInterval);
   }
 
   finishDemo() {
     this.pauseDemo();
-    if (this.btnPlay) this.btnPlay.textContent = "▶ Replay Scenario";
+    if (this.btnPlay) {
+      this.btnPlay.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Replay`;
+    }
     if (this.cueBox) {
       this.cueBox.innerHTML = `<strong>Demonstration Complete:</strong> Successfully arrived at Meeting Room B without visual reliance.`;
     }
@@ -152,8 +163,10 @@ class DemoRunner {
     this.elapsedSeconds = 0;
     this.updateTimerDisplay();
     if (this.progressBar) this.progressBar.style.width = '0%';
-    if (this.btnPlay) this.btnPlay.textContent = "▶ Play Full Scenario";
-    if (this.cueBox) this.cueBox.textContent = 'Ready. Click "Play Full Scenario" for deterministic hackathon demonstration.';
+    if (this.btnPlay) {
+      this.btnPlay.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Play Scenario`;
+    }
+    if (this.cueBox) this.cueBox.textContent = 'Ready for evaluation. Click "Play Scenario" for automated 60-second accessible navigation journey.';
     if (window.antApp) {
       window.antApp.sendWebSocketMessage({ type: 'reset' });
     }

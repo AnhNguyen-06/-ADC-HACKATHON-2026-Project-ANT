@@ -33,5 +33,7 @@
 
 ## Recent Commits / Actions
 - Milestone M8 completed: Final Quality Gate passed unanimously (52/52 tests green).
-- Browser subagent verified full 60-second deterministic presentation scenario, high contrast mode, and telemetry updates.
-- Walkthrough documentation and video recording artifact generated.
+- Impeccable UI/UX overhaul deployed: Replaced generic "AI" styling with authentic tactile assistive terminal design.
+- Added quick landmark preset chips, animated audio waveform, authored SVGs, and collision-free CAD blueprint floorplan.
+- Authored full 0–10 heuristic critique report in `docs/reviews/IMPECCABLE_CRITIQUE.md`.
+- Browser subagent verified live UI rendering, accessibility toggles, and scenario runner.
