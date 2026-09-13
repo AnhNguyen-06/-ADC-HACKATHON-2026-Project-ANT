@@ -1,9 +1,9 @@
 # Project ANT — Current Project State
 
 **Project**: ANT (Adaptive Navigation Technology)  
-**Current Milestone**: M6 (Web Application & Deterministic Demo Mode)  
-**Overall Completion**: 85%  
-**Active Sprint**: Sprint 6 — Accessible UI & Deterministic Demo Cockpit  
+**Current Milestone**: M7 (Red-Team Hardening & Fault Injection)  
+**Overall Completion**: 92%  
+**Active Sprint**: Sprint 7 — Red-Team Stress Testing & Robustness  
 **Status**: IN_PROGRESS  
 
 ---
@@ -20,8 +20,8 @@
 | **Audio & Speech (TTS/STT)** | COMPLETE | 4 Passed | PASS | None |
 | **Obstacle Perception** | COMPLETE | 5 Passed | PASS | None |
 | **Integration & Telemetry** | COMPLETE | 2 Passed | PASS | None |
-| **Web UI & Demo Mode** | IN_PROGRESS | Developing | Pending M6 | None |
-| **Red Team Hardening** | NOT_STARTED | N/A | Pending M7 | Waiting on M6 completion |
+| **Web UI & Demo Mode** | COMPLETE | 3 Passed | PASS | None |
+| **Red Team Hardening** | IN_PROGRESS | Developing | Pending M7 | None |
 
 ---
 
@@ -29,8 +29,8 @@
 - None.
 
 ## Last Verified Checkpoint
-- `project-state/checkpoints/M5-integration.md` (COMPLETE).
+- `project-state/checkpoints/M6-demo.md` (COMPLETE).
 
 ## Recent Commits / Actions
-- Milestone M5 completed: NavigationService, WebSocket telemetry bus, and end-to-end integration verified (41/41 tests passing).
-- Initialized Milestone M6: Building accessible web UI (audio-first user area + judge debug cockpit) and deterministic 60-second demo script.
+- Milestone M6 completed: Web application, accessible design system, live map, and 60-second deterministic stage demo verified (44/44 tests passing).
+- Initialized Milestone M7: Red-Team stress testing, sensor blackout recovery, severed route handling, and edge-case hardening.

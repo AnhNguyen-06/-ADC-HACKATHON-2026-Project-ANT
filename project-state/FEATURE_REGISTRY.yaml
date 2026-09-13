@@ -1,7 +1,7 @@
 project:
   name: ANT
   status: in_progress
-  current_milestone: M6
+  current_milestone: M7
 
 features:
   project_foundation:
@@ -61,15 +61,15 @@ features:
     milestone: M5
 
   demo_mode:
-    status: IN_PROGRESS
+    status: COMPLETE
     implementation: "frontend/index.html, frontend/css/style.css, frontend/js/app.js, frontend/js/demo_runner.js"
     tests: "tests/test_demo.py"
-    review: false
+    review: true
     milestone: M6
 
   red_team_hardening:
-    status: NOT_STARTED
-    implementation: null
-    tests: null
+    status: IN_PROGRESS
+    implementation: "tests/test_red_team.py"
+    tests: "tests/test_red_team.py"
     review: false
     milestone: M7

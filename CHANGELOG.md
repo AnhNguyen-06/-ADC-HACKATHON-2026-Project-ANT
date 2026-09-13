@@ -7,6 +7,19 @@ and this project adheres to Semantic Versioning.
 
 ---
 
+## [0.7.0] - 2026-09-13
+### Added
+- Milestone M6: Web Application & Deterministic Demo Mode.
+- Accessible HTML5 web application: `frontend/index.html`.
+- Custom CSS design system with Dark Theme and High Contrast WCAG AAA mode: `frontend/css/style.css`.
+- Client application controller with WebSocket streaming and Web Audio earcon synthesis: `frontend/js/app.js`.
+- Deterministic 60-second hackathon stage demo runner: `frontend/js/demo_runner.js`.
+- Static asset serving and DOM integrity test suite: `tests/test_demo.py`.
+- 44 unit, component, integration, and demo tests passing.
+- Milestone checkpoint snapshot (`project-state/checkpoints/M6-demo.md`).
+
+---
+
 ## [0.6.0] - 2026-09-13
 ### Added
 - Milestone M5: Full Integration & Telemetry Bus.

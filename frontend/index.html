@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Project ANT - Adaptive Navigation Technology. Assistive indoor navigation web application for blind and visually impaired employees.">
+  <title>Project ANT | Adaptive Navigation Technology</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="theme-dark">
+  <!-- Top Accessibility Bar & Header -->
+  <header class="app-header" role="banner">
+    <div class="header-branding">
+      <div class="logo-badge" aria-hidden="true">ANT</div>
+      <div class="title-group">
+        <h1 id="app-title">Adaptive Navigation Technology</h1>
+        <p class="subtitle">Indoor Assistive Mobility for Visually Impaired Employees</p>
+      </div>
+    </div>
+    
+    <div class="header-controls" role="toolbar" aria-label="System Controls">
+      <div class="mode-switch-group">
+        <span id="mode-label" class="control-label">Mode:</span>
+        <button id="btn-mode-toggle" class="btn btn-secondary" aria-labelledby="mode-label" aria-pressed="false">
+          <span class="mode-indicator demo"></span>
+          <span id="mode-text">DEMO MODE</span>
+        </button>
+      </div>
+
+      <button id="btn-high-contrast" class="btn btn-icon" aria-label="Toggle High Contrast Mode" title="High Contrast Mode">
+        <span aria-hidden="true">👁️</span>
+      </button>
+
+      <div class="connection-status" id="ws-status" aria-live="polite" title="Connection Status">
+        <span class="status-dot connected"></span>
+        <span class="status-text">Connected</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container: Accessible User Area + Judge Cockpit -->
+  <main class="main-layout" id="main-content">
+    
+    <!-- LEFT PANEL: PRIMARY ACCESSIBLE USER AREA (Audio-First & Screen-Reader Optimized) -->
+    <section class="panel user-panel" aria-labelledby="user-panel-heading">
+      <h2 id="user-panel-heading" class="visually-hidden">User Navigation Interface</h2>
+
+      <!-- Primary Auditory Feedback Banner -->
+      <div class="announcement-card" role="region" aria-label="Current Navigation Instruction">
+        <div class="announcement-header">
+          <span class="badge state-badge" id="nav-state-badge">UNKNOWN</span>
+          <span class="audio-pulse" id="audio-wave" aria-hidden="true">
+            <span></span><span></span><span></span><span></span>
+          </span>
+        </div>
+        <p class="primary-instruction" id="primary-instruction" aria-live="assertive">
+          Welcome to ANT. Press Spacebar or click Talk to set your destination.
+        </p>
+        <div class="instruction-meta">
+          <span id="location-meta">Current: <strong>Unlocalized</strong></span>
+          <span id="destination-meta">Destination: <strong>None</strong></span>
+        </div>
+      </div>
+
+      <!-- Large Accessible Touch / Action Surfaces -->
+      <div class="action-grid">
+        <button id="btn-mic-talk" class="btn-primary-action btn-talk" aria-label="Activate voice command (Hot-key: Spacebar)">
+          <div class="icon-circle" aria-hidden="true">🎙️</div>
+          <div class="action-text">
+            <span class="action-title" id="mic-status-text">Tap to Speak</span>
+            <span class="action-hint">or Hold Spacebar</span>
+          </div>
+        </button>
+
+        <button id="btn-repeat-speech" class="btn-primary-action btn-repeat" aria-label="Repeat last instruction (Hot-key: Enter)">
+          <div class="icon-circle" aria-hidden="true">🔊</div>
+          <div class="action-text">
+            <span class="action-title">Repeat Cue</span>
+            <span class="action-hint">Press Enter</span>
+          </div>
+        </button>
+      </div>
+
+      <!-- Destination Selection Controls -->
+      <div class="destination-control-card">
+        <label for="destination-select" class="control-label">Or Select Destination:</label>
+        <div class="destination-input-row">
+          <select id="destination-select" class="select-accessible" aria-label="Destination List">
+            <option value="">-- Choose a Destination --</option>
+            <option value="meeting_b">Meeting Room B (East Wing)</option>
+            <option value="elevator">Main Elevators</option>
+            <option value="restroom">Accessible Restroom</option>
+            <option value="cafeteria">Pantry & Cafeteria</option>
+            <option value="entrance">Office Entrance</option>
+          </select>
+          <button id="btn-start-nav" class="btn btn-success">Navigate</button>
+        </div>
+      </div>
+
+      <!-- Quick Accessibility Keybindings Legend -->
+      <div class="accessibility-shortcuts" role="note" aria-label="Keyboard Shortcuts">
+        <p class="shortcuts-title"><strong>Accessibility Shortcuts:</strong></p>
+        <ul class="shortcuts-list">
+          <li><kbd>Space</kbd> Push-to-Talk</li>
+          <li><kbd>Enter</kbd> Repeat Instruction</li>
+          <li><kbd>Esc</kbd> Reset Navigation</li>
+          <li><kbd>H</kbd> High-Contrast Mode</li>
+        </ul>
+      </div>
+
+      <!-- Emergency / Reset Button -->
+      <div class="reset-row">
+        <button id="btn-reset-nav" class="btn btn-danger-outline" aria-label="Reset navigation session">
+          Stop & Reset Navigation
+        </button>
+      </div>
+    </section>
+
+    <!-- RIGHT PANEL: DEVELOPER / JUDGE DEBUG COCKPIT -->
+    <section class="panel cockpit-panel" aria-labelledby="cockpit-heading">
+      <div class="cockpit-header">
+        <h2 id="cockpit-heading" class="panel-title">Developer & Judge Cockpit</h2>
+        <span class="tag-badge">Passive Vision Telemetry</span>
+      </div>
+
+      <!-- Live Video Feed / AprilTag Visualizer -->
+      <div class="video-container">
+        <div class="video-overlay-header">
+          <span class="cam-status" id="cam-indicator">🔴 SENSOR STREAM</span>
+          <span class="fps-badge" id="tag-readout">No tags detected</span>
+        </div>
+        <div class="viewport-box">
+          <video id="webcam-video" autoplay playsinline muted style="display:none;"></video>
+          <canvas id="vision-canvas" width="640" height="480" role="img" aria-label="Camera vision display with tag bounding boxes"></canvas>
+          
+          <!-- Obstacle Radar Overlay Badge -->
+          <div id="obstacle-hud" class="obstacle-hud hidden" role="alert">
+            <span class="radar-ping"></span>
+            <span class="hazard-icon">⚠️</span>
+            <div class="hazard-info">
+              <strong id="hazard-title">Obstacle Detected</strong>
+              <span id="hazard-details">Chair Ahead • Near</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Real-time Topological Graph Map -->
+      <div class="map-card">
+        <div class="map-header">
+          <span class="map-title">Office Topology Floor 1</span>
+          <span class="route-length" id="route-length-badge">Distance: 0m</span>
+        </div>
+        <div class="map-svg-wrapper">
+          <svg id="office-map-svg" viewBox="-25 -5 50 38" class="office-map">
+            <!-- Dynamically populated by app.js -->
+          </svg>
+        </div>
+      </div>
+
+      <!-- Deterministic 60s Stage Demo Controller -->
+      <div class="demo-controller-card" role="region" aria-label="Deterministic Demo Controls">
+        <div class="demo-controller-header">
+          <span class="demo-title">🎬 60-Second Stage Presentation Demo</span>
+          <span class="demo-timer" id="demo-timer">00:00</span>
+        </div>
+        <div class="timeline-progress">
+          <div class="timeline-bar" id="timeline-bar" style="width: 0%;"></div>
+        </div>
+        <div class="demo-btn-group">
+          <button id="btn-run-full-demo" class="btn btn-primary">▶ Play Full Scenario</button>
+          <button id="btn-step-demo" class="btn btn-secondary">⏭ Next Step</button>
+          <button id="btn-stop-demo" class="btn btn-outline">⏹ Reset</button>
+        </div>
+        <div class="stage-cue-box" id="stage-cue-box">
+          Ready. Click "Play Full Scenario" for deterministic hackathon demonstration.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Live Audio synthesis helper -->
+  <div id="aria-live-polite" class="visually-hidden" aria-live="polite"></div>
+
+  <!-- Scripts -->
+  <script src="/js/app.js"></script>
+  <script src="/js/demo_runner.js"></script>
+</body>
+</html>
