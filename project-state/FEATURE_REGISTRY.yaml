@@ -1,6 +1,6 @@
 project:
   name: ANT
-  status: in_progress
+  status: complete
   current_milestone: M8
 
 features:

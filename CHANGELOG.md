@@ -7,6 +7,18 @@ and this project adheres to Semantic Versioning.
 
 ---
 
+## [1.0.0] - 2026-09-13
+### Added
+- Milestone M8: Final Hackathon Prototype Completion & Quality Gate.
+- 100% automated test suite passing (52/52 tests across 8 test modules in 2.12s).
+- Live browser subagent verification of the complete 60-second stage presentation scenario.
+- UI screenshot gallery and recorded demo video artifact (`ant_navigation_demo_1789283392623.webp`).
+- Final Quality Gate Review passed unanimously (`docs/reviews/M8_REVIEW.md`).
+- Milestone checkpoint snapshot (`project-state/checkpoints/M8-final.md`).
+- Complete system walkthrough report (`walkthrough.md`).
+
+---
+
 ## [0.8.0] - 2026-09-13
 ### Added
 - Milestone M7: Red-Team Hardening & Fault Injection.
