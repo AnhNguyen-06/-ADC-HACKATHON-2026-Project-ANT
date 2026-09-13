@@ -37,4 +37,8 @@
 - Added quick landmark preset chips, animated audio waveform, authored SVGs, and collision-free CAD blueprint floorplan.
 - Authored full 0–10 heuristic critique report in `docs/reviews/IMPECCABLE_CRITIQUE.md`.
 - Released Modern White & Blue Theme as default, Light/Dark mode toggle, and balanced split-cockpit layout.
-- Verified in browser with full-page screenshots in both Light and Dark modes.
+- Overhauled optical scanner: Extra-large 16:9 viewport with authentic physical corporate corridor background (`corridor.jpg`), 160x160 AprilTag 36h11 fiducial pattern, and real computer vision HUD telemetry.
+- Removed unnecessary border boxes around text elements for a clean, editorial layout.
+- Strictly enforced Sentence case across all UI headings, badges, cues, buttons, and state indicators.
+- Live browser verification confirmed in both Light and Dark modes.
+

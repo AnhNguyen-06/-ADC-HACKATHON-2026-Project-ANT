@@ -15,29 +15,29 @@
   <header class="app-header" role="banner">
     <div class="header-branding">
       <div class="logo-mark" aria-hidden="true">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="10"></circle>
           <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
           <path d="M2 12h20"></path>
         </svg>
       </div>
       <div class="title-group">
-        <h1 id="app-title">ANT <span>Adaptive Navigation Technology</span></h1>
-        <p class="subtitle">Indoor Assistive Mobility Terminal</p>
+        <h1 id="app-title">ANT <span>Adaptive navigation technology</span></h1>
+        <p class="subtitle">Indoor assistive mobility terminal</p>
       </div>
     </div>
     
-    <div class="header-controls" role="toolbar" aria-label="System Controls">
+    <div class="header-controls" role="toolbar" aria-label="System controls">
       <div class="mode-switch-group">
-        <button id="btn-mode-toggle" class="btn btn-mode" aria-pressed="false" title="Switch between Demo Simulation and Real Webcam">
+        <button id="btn-mode-toggle" class="btn btn-mode" aria-pressed="false" title="Switch between demo simulation and real webcam">
           <span class="mode-pill demo" id="mode-pill"></span>
-          <span id="mode-text">DEMO MODE</span>
+          <span id="mode-text">Demo mode</span>
         </button>
       </div>
 
-      <!-- Light / Dark Mode Toggle (Replaced Contrast Button) -->
-      <button id="btn-theme-toggle" class="btn btn-utility btn-theme" aria-label="Toggle Light and Dark Mode" title="Toggle Theme (Hot-key: T or H)">
-        <svg class="theme-icon icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <!-- Light / Dark Mode Toggle (Replaces Contrast Button) -->
+      <button id="btn-theme-toggle" class="btn btn-utility btn-theme" aria-label="Toggle light and dark mode" title="Toggle theme (Hot-key: T or H)">
+        <svg class="theme-icon icon-sun" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <circle cx="12" cy="12" r="4"></circle>
           <path d="M12 2v2"></path>
           <path d="M12 20v2"></path>
@@ -48,257 +48,228 @@
           <path d="m6.34 17.66-1.41 1.41"></path>
           <path d="m19.07 4.93-1.41 1.41"></path>
         </svg>
-        <svg class="theme-icon icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <svg class="theme-icon icon-moon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
         </svg>
-        <span class="btn-text" id="theme-text">Dark Mode</span>
+        <span class="btn-text" id="theme-text">Dark mode</span>
       </button>
 
-      <div class="connection-status" id="ws-status" aria-live="polite" title="Telemetry Bus Status">
+      <div class="connection-status" id="ws-status" aria-live="polite" title="Telemetry bus status">
         <span class="status-beacon connected"></span>
-        <span class="status-label">ONLINE</span>
+        <span class="status-label">Online</span>
       </div>
     </div>
   </header>
 
-  <!-- Main Grid: Left Handheld Controller + Right Mission Cockpit -->
+  <!-- Main Balanced Workspace Grid -->
   <main class="main-layout" id="main-content">
     
-    <!-- LEFT PANEL: TACTILE USER TERMINAL (Primary Assistive Surface) -->
-    <section class="panel terminal-panel" aria-labelledby="terminal-heading">
-      <div class="panel-eyebrow">
-        <span class="eyebrow-tag">HANDHELD ASSISTIVE TERMINAL</span>
-        <span class="audio-state-pill" id="audio-state-pill">AUDIO READY</span>
-      </div>
-
-      <!-- Spoken Navigation OLED Display Card -->
-      <div class="oled-display-card" role="region" aria-label="Spoken Navigation Display">
-        <div class="oled-top-bar">
-          <span class="badge state-badge" id="nav-state-badge">STANDBY</span>
-          <div class="oled-audio-meter" id="audio-meter" aria-hidden="true">
-            <canvas id="waveform-canvas" width="120" height="24"></canvas>
+    <!-- TOP ROW: Large Optical Vision Scanner (Hero) + Handheld Terminal -->
+    <div class="cockpit-top-row">
+      
+      <!-- HERO: Large Optical Vision & QR/AprilTag Scanner -->
+      <section class="panel scanner-panel" aria-labelledby="scanner-heading">
+        <div class="panel-header-clean">
+          <div class="panel-title-wrap">
+            <span class="rec-dot-live"></span>
+            <h2 id="scanner-heading" class="panel-title">Optical vision & landmark scanner</h2>
+          </div>
+          <div class="sensor-meta-clean">
+            <span class="sensor-spec">AprilTag 36h11</span>
+            <span class="sensor-divider">·</span>
+            <span id="tag-readout" class="sensor-status-live">Scanning environment...</span>
           </div>
         </div>
 
-        <p class="primary-instruction" id="primary-instruction" aria-live="assertive">
-          Welcome to ANT. Hold Spacebar or tap Voice Command to set your destination.
-        </p>
-
-        <div class="oled-meta-footer">
-          <div class="meta-item">
-            <span class="meta-label">CURRENT POSITION</span>
-            <strong class="meta-val" id="location-meta">Unlocalized</strong>
+        <div class="scanner-viewport-box">
+          <!-- Real-camera lens reticle -->
+          <div class="viewfinder-overlay" aria-hidden="true">
+            <div class="bracket top-l"></div>
+            <div class="bracket top-r"></div>
+            <div class="bracket bot-l"></div>
+            <div class="bracket bot-r"></div>
+            <div class="reticle-center"></div>
           </div>
-          <div class="meta-separator" aria-hidden="true"></div>
-          <div class="meta-item">
-            <span class="meta-label">ACTIVE DESTINATION</span>
-            <strong class="meta-val" id="destination-meta">None Selected</strong>
+
+          <video id="webcam-video" autoplay playsinline muted style="display:none;"></video>
+          <canvas id="vision-canvas" width="960" height="540" role="img" aria-label="Computer vision video stream with marker bounding boxes"></canvas>
+
+          <!-- Directional Hazard Awareness HUD -->
+          <div id="obstacle-hud" class="directional-hazard-hud hidden" role="alert">
+            <div class="hazard-symbol" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+                <line x1="12" y1="9" x2="12" y2="13"></line>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+              </svg>
+            </div>
+            <div class="hazard-text-group">
+              <strong id="hazard-title">Hazard in pathway</strong>
+              <span id="hazard-details">Chair detected · Center corridor</span>
+            </div>
+            <div class="hazard-vector" aria-hidden="true">
+              <span class="vector-arrow">⭠</span>
+              <span class="vector-text">Move left</span>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <!-- Massive Tactile Physical Action Surfaces -->
-      <div class="tactile-action-grid">
-        <button id="btn-mic-talk" class="tactile-btn tactile-talk" aria-label="Voice Navigation Input (Hold Spacebar to speak)">
-          <div class="concentric-ring-wrapper" aria-hidden="true">
-            <div class="ring-pulse"></div>
-            <div class="physical-pad">
-              <svg class="icon-svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <!-- RIGHT: Handheld Assistive Terminal -->
+      <section class="panel terminal-panel" aria-labelledby="terminal-heading">
+        <div class="panel-header-clean">
+          <h2 id="terminal-heading" class="panel-title">Handheld assistive terminal</h2>
+          <div class="audio-status-clean">
+            <span class="audio-dot"></span>
+            <span id="audio-state-pill" class="audio-text">Audio ready</span>
+          </div>
+        </div>
+
+        <!-- Spoken Navigation Guidance Card -->
+        <div class="guidance-card" role="region" aria-label="Spoken navigation display">
+          <div class="guidance-card-header">
+            <span class="state-badge-clean" id="nav-state-badge">Standby</span>
+            <div class="audio-meter-wrap" id="audio-meter" aria-hidden="true">
+              <canvas id="waveform-canvas" width="100" height="20"></canvas>
+            </div>
+          </div>
+
+          <p class="primary-instruction" id="primary-instruction" aria-live="assertive">
+            Welcome to ANT. Hold spacebar or tap voice command to set your destination.
+          </p>
+
+          <div class="guidance-meta-clean">
+            <span class="meta-row">Current position: <strong id="location-meta">Unlocalized</strong></span>
+            <span class="meta-divider">·</span>
+            <span class="meta-row">Destination: <strong id="destination-meta">None selected</strong></span>
+          </div>
+        </div>
+
+        <!-- Tactile Push Action Buttons -->
+        <div class="action-buttons-grid">
+          <button id="btn-mic-talk" class="tactile-btn tactile-talk" aria-label="Voice navigation input (Hold spacebar to speak)">
+            <div class="btn-icon-pad">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
                 <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
                 <line x1="12" y1="19" x2="12" y2="22"></line>
               </svg>
             </div>
-          </div>
-          <div class="tactile-btn-copy">
-            <span class="pad-headline" id="mic-status-text">Voice Command</span>
-            <span class="pad-subtext">Hold Spacebar or Click</span>
-          </div>
-        </button>
+            <div class="btn-copy">
+              <span class="btn-title" id="mic-status-text">Voice command</span>
+              <span class="btn-desc">Hold spacebar or click</span>
+            </div>
+          </button>
 
-        <button id="btn-repeat-speech" class="tactile-btn tactile-repeat" aria-label="Repeat Last Audio Instruction (Press Enter)">
-          <div class="physical-pad small" aria-hidden="true">
-            <svg class="icon-svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-              <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-              <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
-            </svg>
-          </div>
-          <div class="tactile-btn-copy">
-            <span class="pad-headline">Repeat Cue</span>
-            <span class="pad-subtext">Press Enter</span>
-          </div>
-        </button>
-      </div>
-
-      <!-- Fast Landmark Destination Chips (One-Tap Accessible Selection) -->
-      <div class="quick-destination-block">
-        <label for="destination-select" class="control-caption">QUICK LANDMARK PRESETS</label>
-        <div class="chip-row">
-          <button class="landmark-chip" data-dest="meeting_b">
-            <span class="chip-dot"></span>
-            Meeting Room B
-          </button>
-          <button class="landmark-chip" data-dest="elevator">
-            <span class="chip-dot"></span>
-            Elevators
-          </button>
-          <button class="landmark-chip" data-dest="restroom">
-            <span class="chip-dot"></span>
-            Restroom
-          </button>
-          <button class="landmark-chip" data-dest="cafeteria">
-            <span class="chip-dot"></span>
-            Cafeteria
+          <button id="btn-repeat-speech" class="tactile-btn tactile-repeat" aria-label="Repeat last audio instruction (Press enter)">
+            <div class="btn-icon-pad">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+              </svg>
+            </div>
+            <div class="btn-copy">
+              <span class="btn-title">Repeat cue</span>
+              <span class="btn-desc">Press enter</span>
+            </div>
           </button>
         </div>
 
-        <div class="destination-select-wrapper">
-          <select id="destination-select" class="select-accessible" aria-label="Full Destination Menu">
-            <option value="">-- Or Browse All Known Locations --</option>
-            <option value="meeting_b">Meeting Room B (East Wing)</option>
-            <option value="elevator">Main Elevators (Lobby)</option>
-            <option value="restroom">Accessible Restroom (Tactile Sign)</option>
-            <option value="cafeteria">Pantry & Cafeteria (Coffee Machine)</option>
-            <option value="entrance">Office Entrance (Glass Doors)</option>
-          </select>
-          <button id="btn-start-nav" class="btn btn-accent-nav">Start Route</button>
+        <!-- Fast Landmark Chips -->
+        <div class="landmarks-section">
+          <span class="section-subhead">Preset office landmarks</span>
+          <div class="chip-row">
+            <button class="landmark-chip" data-dest="meeting_b">Meeting Room B</button>
+            <button class="landmark-chip" data-dest="elevator">Elevators</button>
+            <button class="landmark-chip" data-dest="restroom">Restroom</button>
+            <button class="landmark-chip" data-dest="cafeteria">Cafeteria</button>
+          </div>
+
+          <div class="destination-picker-row">
+            <select id="destination-select" class="select-clean" aria-label="Full destination menu">
+              <option value="">-- Or select known location --</option>
+              <option value="meeting_b">Meeting Room B (East Wing)</option>
+              <option value="elevator">Main Elevators (Lobby)</option>
+              <option value="restroom">Accessible Restroom (Tactile sign)</option>
+              <option value="cafeteria">Pantry & Cafeteria (Coffee machine)</option>
+              <option value="entrance">Office Entrance (Glass doors)</option>
+            </select>
+            <button id="btn-start-nav" class="btn btn-primary-nav">Start route</button>
+          </div>
         </div>
-      </div>
 
-      <!-- Tactile Hotkey Strip -->
-      <div class="hardware-key-strip" role="region" aria-label="Physical Hardware Key Mappings">
-        <div class="key-item"><kbd>SPACE</kbd> Talk</div>
-        <div class="key-item"><kbd>ENTER</kbd> Repeat</div>
-        <div class="key-item"><kbd>T</kbd> Theme</div>
-        <div class="key-item"><kbd>ESC</kbd> Reset</div>
-      </div>
+        <!-- Clean Shortcuts & Session Reset -->
+        <div class="terminal-footer-row">
+          <span class="shortcuts-hint">Space to talk · Enter to repeat · T for theme · Esc to reset</span>
+          <button id="btn-reset-nav" class="btn-link-reset" aria-label="Stop navigation and reset session">Reset session</button>
+        </div>
+      </section>
+    </div>
 
-      <!-- Clean Stop / Reset Session -->
-      <div class="cancel-container">
-        <button id="btn-reset-nav" class="btn btn-ebrake" aria-label="Stop navigation and reset session">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+    <!-- BOTTOM ROW: CAD Floorplan Map + Stage Demonstration Rehearsal -->
+    <div class="cockpit-bottom-row">
+      
+      <!-- Architectural CAD Blueprint Map Visualizer -->
+      <section class="panel map-panel" aria-labelledby="map-heading">
+        <div class="panel-header-clean">
+          <div class="panel-title-wrap">
+            <h2 id="map-heading" class="panel-title">Topological floorplan</h2>
+            <span class="panel-subtitle">Level 1 · Accessible corridors</span>
+          </div>
+          <div class="map-stats-clean">
+            <span class="stat-label">Active route:</span>
+            <strong id="route-length-badge" class="stat-value">0.0m</strong>
+          </div>
+        </div>
+
+        <div class="cad-canvas-clean">
+          <svg id="office-map-svg" viewBox="-25 -5 50 38" class="cad-svg-element">
+            <!-- Dynamically populated by app.js -->
           </svg>
-          Reset Session
-        </button>
-      </div>
-    </section>
-
-    <!-- RIGHT PANEL: MISSION CONTROL & SAFETY COCKPIT -->
-    <section class="panel cockpit-panel" aria-labelledby="cockpit-heading">
-      <div class="panel-eyebrow">
-        <span class="eyebrow-tag">SPATIAL TELEMETRY & CAD RADAR</span>
-        <span class="telemetry-rate" id="telemetry-rate">60 FPS • SENSOR BUS READY</span>
-      </div>
-
-      <!-- Upper Cockpit Grid: Optical Viewfinder & CAD Map side-by-side -->
-      <div class="cockpit-split-grid">
-        <!-- Precision Optical Video Viewport -->
-        <div class="optical-viewport-card">
-          <div class="hud-top-bar">
-            <div class="hud-indicator-group">
-              <span class="hud-rec-dot" aria-hidden="true"></span>
-              <span class="hud-label" id="cam-indicator">OPTICAL SENSOR 01</span>
-            </div>
-            <span class="hud-telemetry-badge" id="tag-readout">STANDBY</span>
-          </div>
-
-          <div class="viewport-stage">
-            <!-- Crosshair Reticle -->
-            <div class="crosshair-layer" aria-hidden="true">
-              <div class="crosshair-ch"></div>
-              <div class="crosshair-cv"></div>
-              <div class="corner-bracket top-left"></div>
-              <div class="corner-bracket top-right"></div>
-              <div class="corner-bracket bottom-left"></div>
-              <div class="corner-bracket bottom-right"></div>
-            </div>
-
-            <video id="webcam-video" autoplay playsinline muted style="display:none;"></video>
-            <canvas id="vision-canvas" width="640" height="480" role="img" aria-label="Computer vision video stream with marker bounding boxes"></canvas>
-            
-            <!-- Directional Hazard Awareness HUD -->
-            <div id="obstacle-hud" class="directional-hazard-hud hidden" role="alert">
-              <div class="hazard-symbol" aria-hidden="true">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
-                  <line x1="12" y1="9" x2="12" y2="13"></line>
-                  <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                </svg>
-              </div>
-              <div class="hazard-text-group">
-                <strong id="hazard-title">HAZARD IN PATHWAY</strong>
-                <span id="hazard-details">CHAIR DETECTED • CENTER CORRIDOR</span>
-              </div>
-              <div class="hazard-vector" aria-hidden="true">
-                <span class="vector-arrow">⭠</span>
-                <span class="vector-text">MOVE LEFT</span>
-              </div>
-            </div>
-          </div>
         </div>
-
-        <!-- Architectural CAD Blueprint Map Visualizer -->
-        <div class="cad-map-card">
-          <div class="cad-header">
-            <div class="cad-title-group">
-              <span class="cad-title">TOPOLOGICAL FLOORPLAN</span>
-              <span class="cad-sub">LEVEL 1 • ACCESSIBLE CORRIDORS</span>
-            </div>
-            <div class="cad-stats">
-              <span class="stat-pill" id="route-length-badge">Route: 0m</span>
-            </div>
-          </div>
-
-          <div class="cad-canvas-box">
-            <svg id="office-map-svg" viewBox="-25 -5 50 38" class="cad-svg-element">
-              <!-- Dynamically populated by app.js -->
-            </svg>
-          </div>
-        </div>
-      </div>
+      </section>
 
       <!-- 60-Second Deterministic Stage Demonstration Bar -->
-      <div class="stage-transport-bar" role="region" aria-label="Deterministic Demonstration Controls">
-        <div class="transport-header">
-          <div class="transport-title-group">
-            <span class="transport-badge">STAGE REHEARSAL</span>
-            <span class="transport-title">Deterministic Presentation Script</span>
+      <section class="panel rehearsal-panel" aria-labelledby="rehearsal-heading">
+        <div class="panel-header-clean">
+          <div class="panel-title-wrap">
+            <h2 id="rehearsal-heading" class="panel-title">Deterministic presentation script</h2>
+            <span class="panel-subtitle">60s automated stage scenario</span>
           </div>
-          <span class="transport-timer" id="demo-timer">00:00</span>
+          <span class="timer-display-clean" id="demo-timer">00:00</span>
         </div>
 
-        <div class="transport-track" aria-hidden="true">
-          <div class="transport-progress" id="timeline-bar" style="width: 0%;"></div>
+        <div class="timeline-track-clean" aria-hidden="true">
+          <div class="timeline-fill-clean" id="timeline-bar" style="width: 0%;"></div>
         </div>
 
-        <div class="transport-actions">
-          <button id="btn-run-full-demo" class="btn btn-transport-primary">
+        <div class="rehearsal-actions-row">
+          <button id="btn-run-full-demo" class="btn btn-rehearsal-play">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <polygon points="5 3 19 12 5 21 5 3"></polygon>
             </svg>
-            Play Scenario
+            Play scenario
           </button>
           
-          <button id="btn-step-demo" class="btn btn-transport-secondary">
+          <button id="btn-step-demo" class="btn btn-rehearsal-step">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <polygon points="5 4 15 12 5 20 5 4"></polygon>
               <line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2"></line>
             </svg>
-            Next Step
+            Next step
           </button>
 
-          <button id="btn-stop-demo" class="btn btn-transport-ghost">
+          <button id="btn-stop-demo" class="btn btn-rehearsal-reset">
             Reset
           </button>
         </div>
 
-        <div class="transport-cue-box" id="stage-cue-box">
-          Ready for evaluation. Click "Play Scenario" for automated 60-second accessible navigation journey.
+        <div class="rehearsal-cue-card" id="stage-cue-box">
+          Ready for evaluation. Click "Play scenario" for automated 60-second accessible navigation journey.
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
   </main>
 
   <!-- Hidden ARIA Live Region for Screen Readers -->

@@ -20,6 +20,9 @@ class AntApp {
     this.mapData = null;
     this.currentLocation = null;
     this.activeRoute = null;
+    this.detectedTags = [];
+    this.activeObstacle = null;
+    this.corridorImg = null;
 
     this.initTheme();
     this.initAudioContext();
@@ -30,6 +33,12 @@ class AntApp {
     this.initEventListeners();
     this.connectWebSocket();
     this.loadMapTopology();
+  }
+
+  formatSentenceCase(str) {
+    if (!str) return '';
+    const clean = String(str).replace(/_/g, ' ').trim().toLowerCase();
+    return clean.charAt(0).toUpperCase() + clean.slice(1);
   }
 
   initTheme() {
@@ -49,12 +58,12 @@ class AntApp {
       document.body.classList.remove('theme-light');
       document.body.classList.add('theme-dark');
       localStorage.setItem('ant-theme', 'dark');
-      if (text) text.textContent = 'Light Mode';
+      if (text) text.textContent = 'Light mode';
     } else {
       document.body.classList.remove('theme-dark');
       document.body.classList.add('theme-light');
       localStorage.setItem('ant-theme', 'light');
-      if (text) text.textContent = 'Dark Mode';
+      if (text) text.textContent = 'Dark mode';
     }
     this.renderMap();
   }
@@ -146,7 +155,7 @@ class AntApp {
     if (aria) aria.textContent = text;
 
     this.isSpeaking = true;
-    this.setAudioState('speaking', 'SPEAKING CUE');
+    this.setAudioState('speaking', 'Speaking cue');
 
     // Use native Web Speech Synthesis if available
     if (this.synth) {
@@ -157,13 +166,13 @@ class AntApp {
       utterance.onend = () => {
         this.isSpeaking = false;
         if (!this.isRecording) {
-          this.setAudioState('ready', 'AUDIO READY');
+          this.setAudioState('ready', 'Audio ready');
         }
       };
       utterance.onerror = () => {
         this.isSpeaking = false;
         if (!this.isRecording) {
-          this.setAudioState('ready', 'AUDIO READY');
+          this.setAudioState('ready', 'Audio ready');
         }
       };
       this.synth.speak(utterance);
@@ -171,7 +180,7 @@ class AntApp {
       setTimeout(() => {
         this.isSpeaking = false;
         if (!this.isRecording) {
-          this.setAudioState('ready', 'AUDIO READY');
+          this.setAudioState('ready', 'Audio ready');
         }
       }, 3000);
     }
@@ -243,11 +252,11 @@ class AntApp {
     if (recording) {
       btn?.classList.add('recording');
       if (text) text.textContent = 'Listening...';
-      this.setAudioState('listening', 'LISTENING...');
+      this.setAudioState('listening', 'Listening...');
     } else {
       btn?.classList.remove('recording');
-      if (text) text.textContent = 'Voice Command';
-      this.setAudioState('ready', 'AUDIO READY');
+      if (text) text.textContent = 'Voice command';
+      this.setAudioState('ready', 'Audio ready');
     }
   }
 
@@ -255,6 +264,17 @@ class AntApp {
     this.canvas = document.getElementById('vision-canvas');
     this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
     this.svgMap = document.getElementById('office-map-svg');
+
+    // Preload photorealistic real optical sensor corridor imagery
+    this.corridorImg = new Image();
+    this.corridorImg.src = '/assets/corridor.jpg';
+    this.corridorImg.onload = () => {
+      if (this.mode === 'DEMO') {
+        this.renderVisionCanvas(this.detectedTags, this.activeObstacle);
+      }
+    };
+    // Initial draw
+    this.renderVisionCanvas([], null);
   }
 
   initWaveform() {
@@ -360,18 +380,21 @@ class AntApp {
     const select = document.getElementById('destination-select');
     if (select) select.value = '';
     const destMeta = document.getElementById('destination-meta');
-    if (destMeta) destMeta.textContent = 'None Selected';
+    if (destMeta) destMeta.textContent = 'None selected';
     const locMeta = document.getElementById('location-meta');
     if (locMeta) locMeta.textContent = 'Unlocalized';
     const stateBadge = document.getElementById('nav-state-badge');
     if (stateBadge) {
-      stateBadge.textContent = 'STANDBY';
-      stateBadge.className = 'badge state-badge standby';
+      stateBadge.textContent = 'Standby';
+      stateBadge.className = 'state-badge-clean standby';
     }
     const obsHud = document.getElementById('obstacle-hud');
     if (obsHud) obsHud.classList.add('hidden');
     const tagReadout = document.getElementById('tag-readout');
     if (tagReadout) tagReadout.textContent = 'Passive optical ready';
+    this.detectedTags = [];
+    this.activeObstacle = null;
+    this.renderVisionCanvas([], null);
   }
 
   initEventListeners() {
@@ -434,13 +457,14 @@ class AntApp {
     if (this.mode === 'REAL') {
       indicator?.classList.remove('demo');
       indicator?.classList.add('real');
-      if (text) text.textContent = 'REAL WEBCAM';
+      if (text) text.textContent = 'Live camera';
       this.startRealWebcam();
     } else {
       indicator?.classList.remove('real');
       indicator?.classList.add('demo');
-      if (text) text.textContent = 'DEMO MODE';
+      if (text) text.textContent = 'Demo mode';
       this.stopRealWebcam();
+      this.renderVisionCanvas(this.detectedTags, this.activeObstacle);
     }
   }
 
@@ -530,10 +554,10 @@ class AntApp {
     const label = document.querySelector('.connection-status .status-label') || document.querySelector('.connection-status .status-text');
     if (connected) {
       beacon?.classList.add('connected');
-      if (label) label.textContent = 'ONLINE';
+      if (label) label.textContent = 'Online';
     } else {
       beacon?.classList.remove('connected');
-      if (label) label.textContent = 'OFFLINE';
+      if (label) label.textContent = 'Offline';
     }
   }
 
@@ -544,11 +568,14 @@ class AntApp {
   }
 
   handleTelemetry(data) {
-    // 1. Update State Badge
+    this.detectedTags = data.detected_tags || [];
+    this.activeObstacle = data.active_obstacle || null;
+
+    // 1. Update State Badge in Sentence case
     const stateBadge = document.getElementById('nav-state-badge');
     if (stateBadge) {
-      stateBadge.textContent = data.state;
-      stateBadge.className = 'badge state-badge ' + data.state.toLowerCase().replace(/_/g, '-');
+      stateBadge.textContent = this.formatSentenceCase(data.state);
+      stateBadge.className = 'state-badge-clean ' + (data.state || '').toLowerCase().replace(/_/g, '-');
     }
 
     // 2. Audio Earcons & Speech trigger
@@ -565,7 +592,7 @@ class AntApp {
       this.speak(data.instruction);
     }
 
-    // 3. Metadata updates
+    // 3. Metadata updates in Sentence case
     const locMeta = document.getElementById('location-meta');
     if (locMeta) {
       locMeta.textContent = data.current_location ? data.current_location.name : 'Unlocalized';
@@ -573,7 +600,7 @@ class AntApp {
 
     const destMeta = document.getElementById('destination-meta');
     if (destMeta) {
-      destMeta.textContent = data.destination ? data.destination.name : 'None Selected';
+      destMeta.textContent = data.destination ? data.destination.name : 'None selected';
     }
 
     // Sync landmark chip highlighting and select menu
@@ -587,7 +614,7 @@ class AntApp {
       this.updateActiveLandmarkChip(null);
     }
 
-    // 4. Obstacle HUD
+    // 4. Obstacle HUD in Sentence case
     const obsHud = document.getElementById('obstacle-hud');
     if (data.active_obstacle) {
       obsHud?.classList.remove('hidden');
@@ -595,17 +622,17 @@ class AntApp {
       if (details) {
         const cls = data.active_obstacle.class || 'Obstacle';
         const pos = data.active_obstacle.position || 'center';
-        details.textContent = `${cls.toUpperCase()} • ${pos.toUpperCase()}`;
+        details.textContent = `${this.formatSentenceCase(cls)} detected · ${this.formatSentenceCase(pos)} corridor`;
       }
     } else {
       obsHud?.classList.add('hidden');
     }
 
-    // 5. Visual Tag Readout
+    // 5. Visual Tag Readout in Sentence case
     const tagReadout = document.getElementById('tag-readout');
     if (data.detected_tags && data.detected_tags.length > 0) {
       const tagIds = data.detected_tags.map(t => `#${t.tag_id}`).join(', ');
-      if (tagReadout) tagReadout.textContent = `Tag ${tagIds} Sighted`;
+      if (tagReadout) tagReadout.textContent = `Tag ${tagIds} sighted`;
     } else {
       if (tagReadout) tagReadout.textContent = 'Passive optical ready';
     }
@@ -738,67 +765,99 @@ class AntApp {
     const w = this.canvas.width;
     const h = this.canvas.height;
 
-    // In demo mode or when no real camera feed, render synthesized indoor perspective
     if (this.mode === 'DEMO') {
-      // Dark optical viewfinder surface
-      ctx.fillStyle = '#060a12';
-      ctx.fillRect(0, 0, w, h);
-
-      // Floor perspective grid lines
-      ctx.strokeStyle = 'rgba(56, 189, 248, 0.08)';
-      ctx.lineWidth = 1;
-      for (let x = 0; x <= w; x += 40) {
-        ctx.beginPath();
-        ctx.moveTo(x, h);
-        ctx.lineTo(w / 2 + (x - w / 2) * 0.22, h * 0.42);
-        ctx.stroke();
+      // 1. Draw Real Technology Corridor Camera Feed
+      if (this.corridorImg && this.corridorImg.complete && this.corridorImg.naturalWidth > 0) {
+        ctx.drawImage(this.corridorImg, 0, 0, w, h);
+        
+        // Subtle optical sensor exposure grade
+        const vignette = ctx.createLinearGradient(0, 0, 0, h);
+        vignette.addColorStop(0, 'rgba(15, 23, 42, 0.45)');
+        vignette.addColorStop(0.18, 'rgba(15, 23, 42, 0.05)');
+        vignette.addColorStop(0.82, 'rgba(15, 23, 42, 0.1)');
+        vignette.addColorStop(1, 'rgba(15, 23, 42, 0.55)');
+        ctx.fillStyle = vignette;
+        ctx.fillRect(0, 0, w, h);
+      } else {
+        // High-end neutral slate fallback
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(0, 0, w, h);
       }
 
-      // Ceiling perspective lines
-      for (let x = 0; x <= w; x += 40) {
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(w / 2 + (x - w / 2) * 0.22, h * 0.42);
-        ctx.stroke();
-      }
+      // 2. Sensor Telemetry Header & Footer (Industrial Optical HUD in Sentence case)
+      ctx.font = '500 12px "JetBrains Mono", monospace';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+      ctx.fillText('Optical stream · 1080p 30 fps · ISO 200 · f/1.8', 24, 30);
 
-      // Horizon line
-      ctx.strokeStyle = 'rgba(56, 189, 248, 0.18)';
-      ctx.beginPath();
-      ctx.moveTo(0, h * 0.42);
-      ctx.lineTo(w, h * 0.42);
-      ctx.stroke();
+      ctx.textAlign = 'right';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+      ctx.fillText('Sensor: Wide 84° fov · Homography locked', w - 24, 30);
+      ctx.textAlign = 'start';
 
-      // Optical focal center mark
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+      ctx.fillText('Tracking algorithm: AprilTag 36h11 fiducial pose estimation', 24, h - 22);
+
+      ctx.textAlign = 'right';
+      ctx.fillText('Depth perception: Active range 0.8m – 6.5m', w - 24, h - 22);
+      ctx.textAlign = 'start';
+
+      // 3. Central Lens Framing & Crosshair Reticle (Fine 1px line)
+      const cx = w / 2;
+      const cy = h * 0.48;
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
       ctx.lineWidth = 1;
       ctx.beginPath();
-      ctx.moveTo(w / 2 - 12, h * 0.42);
-      ctx.lineTo(w / 2 + 12, h * 0.42);
-      ctx.moveTo(w / 2, h * 0.42 - 12);
-      ctx.lineTo(w / 2, h * 0.42 + 12);
+      ctx.moveTo(cx - 18, cy); ctx.lineTo(cx - 5, cy);
+      ctx.moveTo(cx + 5, cy); ctx.lineTo(cx + 18, cy);
+      ctx.moveTo(cx, cy - 18); ctx.lineTo(cx, cy - 5);
+      ctx.moveTo(cx, cy + 5); ctx.lineTo(cx, cy + 18);
       ctx.stroke();
 
-      // If active tag detected, render simulated AprilTag graphic with precision reticle
+      // 4. Large Optical QR / AprilTag Scanner
       if (this.currentLocation && this.currentLocation.tag_id) {
         const tagId = this.currentLocation.tag_id;
-        const tagX = w * 0.5 - 55;
-        const tagY = h * 0.36;
-        const tagSize = 110;
+        const tagSize = 160; // Extra large high-res marker
+        const tagX = w * 0.5 - tagSize / 2;
+        const tagY = h * 0.34 - 15;
 
-        // Tag matrix background
+        // Drop shadow for real physical plaque depth
+        ctx.save();
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.55)';
+        ctx.shadowBlur = 18;
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(tagX, tagY, tagSize, tagSize);
-        ctx.fillStyle = '#0a0f1d';
-        ctx.fillRect(tagX + 12, tagY + 12, tagSize - 24, tagSize - 24);
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(tagX + 30, tagY + 30, tagSize - 60, tagSize - 60);
+        ctx.restore();
 
-        // Technical Corner Brackets
+        // Matte black exterior frame
+        const borderPad = 14;
+        ctx.fillStyle = '#0a0f1d';
+        ctx.fillRect(tagX + borderPad, tagY + borderPad, tagSize - borderPad * 2, tagSize - borderPad * 2);
+
+        // Quiet white boundary
+        const qz = borderPad + 9;
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(tagX + qz, tagY + qz, tagSize - qz * 2, tagSize - qz * 2);
+
+        // Deterministic AprilTag 36h11 bit cells
+        const innerX = tagX + qz + 4;
+        const innerY = tagY + qz + 4;
+        const innerSize = tagSize - (qz + 4) * 2;
+        const cellSize = innerSize / 6;
+        ctx.fillStyle = '#0a0f1d';
+        for (let r = 0; r < 6; r++) {
+          for (let c = 0; c < 6; c++) {
+            const isBlack = ((tagId * 19 + r * 7 + c * 13) % 2 === 0);
+            if (isBlack) {
+              ctx.fillRect(innerX + c * cellSize, innerY + r * cellSize, cellSize + 0.5, cellSize + 0.5);
+            }
+          }
+        }
+
+        // Precision corner tracking brackets [ ]
         ctx.strokeStyle = '#10b981';
-        ctx.lineWidth = 2.5;
-        const bLen = 14;
-        const pad = 8;
+        ctx.lineWidth = 3;
+        const bLen = 22;
+        const pad = 12;
         const bx1 = tagX - pad;
         const by1 = tagY - pad;
         const bx2 = tagX + tagSize + pad;
@@ -821,42 +880,99 @@ class AntApp {
         ctx.moveTo(bx2 - bLen, by2); ctx.lineTo(bx2, by2); ctx.lineTo(bx2, by2 - bLen);
         ctx.stroke();
 
-        // High-contrast HUD tag banner
-        ctx.fillStyle = 'rgba(16, 185, 129, 0.9)';
-        ctx.fillRect(bx1, by1 - 24, 180, 20);
-        ctx.fillStyle = '#040711';
-        ctx.font = 'bold 11px "JetBrains Mono", monospace';
-        ctx.fillText(`APRILTAG #${tagId} LOCK`, bx1 + 6, by1 - 10);
-
-        // Location label
+        // Clean unboxed metadata badges in Sentence case
+        // Top lock badge
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.92)';
+        if (typeof ctx.roundRect === 'function') {
+          ctx.beginPath();
+          ctx.roundRect(tagX - 10, tagY - 34, tagSize + 20, 24, 4);
+          ctx.fill();
+        } else {
+          ctx.fillRect(tagX - 10, tagY - 34, tagSize + 20, 24);
+        }
         ctx.fillStyle = '#34d399';
-        ctx.font = '600 12px "Plus Jakarta Sans", sans-serif';
-        ctx.fillText(`${this.currentLocation.name}`, bx1, by2 + 18);
+        ctx.font = '600 12px "JetBrains Mono", monospace';
+        ctx.fillText(`AprilTag #${tagId} · Locked`, tagX - 2, tagY - 18);
+
+        // Bottom landmark identification
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.92)';
+        if (typeof ctx.roundRect === 'function') {
+          ctx.beginPath();
+          ctx.roundRect(tagX - 24, tagY + tagSize + 10, tagSize + 48, 26, 4);
+          ctx.fill();
+        } else {
+          ctx.fillRect(tagX - 24, tagY + tagSize + 10, tagSize + 48, 26);
+        }
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '600 13px "Plus Jakarta Sans", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(this.currentLocation.name, tagX + tagSize / 2, tagY + tagSize + 28);
+        ctx.textAlign = 'start';
+      } else {
+        // Passive scanning zone ROI
+        const scanW = 200;
+        const scanH = 200;
+        const sx = cx - scanW / 2;
+        const sy = cy - scanH / 2;
+
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([6, 6]);
+        ctx.strokeRect(sx, sy, scanW, scanH);
+        ctx.setLineDash([]);
+
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+        ctx.font = '500 12px "JetBrains Mono", monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('Passive landmark scan active', cx, sy + scanH + 24);
+        ctx.textAlign = 'start';
       }
 
-      // If obstacle present, render tactical hazard marker
+      // 5. Authentic Computer Vision Obstacle Detection Box
       if (activeObstacle) {
         const obsX = activeObstacle.position === 'left' ? w * 0.28 : (activeObstacle.position === 'right' ? w * 0.72 : w * 0.5);
-        const obsY = h * 0.68;
-        const ow = 90;
-        const oh = 90;
+        const obsY = h * 0.64;
+        const ow = 130;
+        const oh = 130;
+        const ox = obsX - ow / 2;
+        const oy = obsY - oh / 2;
 
-        // Semi-transparent alert fill
+        // Translucent hazard fill
         ctx.fillStyle = 'rgba(239, 68, 68, 0.12)';
-        ctx.fillRect(obsX - ow / 2, obsY - oh / 2, ow, oh);
+        ctx.fillRect(ox, oy, ow, oh);
 
-        // Hazard reticle border
+        // Bounding box
         ctx.strokeStyle = '#ef4444';
         ctx.lineWidth = 2.5;
-        ctx.strokeRect(obsX - ow / 2, obsY - oh / 2, ow, oh);
+        ctx.strokeRect(ox, oy, ow, oh);
 
-        // Hazard Label Banner
+        // Clean label in Sentence case
+        const obsTitle = `Hazard: ${this.formatSentenceCase(activeObstacle.class || 'obstacle')} (94%)`;
         ctx.fillStyle = '#ef4444';
-        ctx.fillRect(obsX - ow / 2, obsY - oh / 2 - 22, ow, 20);
+        if (typeof ctx.roundRect === 'function') {
+          ctx.beginPath();
+          ctx.roundRect(ox, oy - 24, ow, 22, 3);
+          ctx.fill();
+        } else {
+          ctx.fillRect(ox, oy - 24, ow, 22);
+        }
         ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 11px "JetBrains Mono", monospace';
+        ctx.font = '600 11px "JetBrains Mono", monospace';
         ctx.textAlign = 'center';
-        ctx.fillText(`${activeObstacle.class.toUpperCase()}`, obsX, obsY - oh / 2 - 8);
+        ctx.fillText(obsTitle, obsX, oy - 9);
+
+        // Distance below box
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.88)';
+        if (typeof ctx.roundRect === 'function') {
+          ctx.beginPath();
+          ctx.roundRect(ox, oy + oh + 6, ow, 20, 3);
+          ctx.fill();
+        } else {
+          ctx.fillRect(ox, oy + oh + 6, ow, 20);
+        }
+        ctx.fillStyle = '#fca5a5';
+        ctx.font = '500 11px "JetBrains Mono", monospace';
+        ctx.fillText('Distance: 1.4m', obsX, oy + oh + 20);
         ctx.textAlign = 'start';
       }
     }

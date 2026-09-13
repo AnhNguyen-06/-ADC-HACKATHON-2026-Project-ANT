@@ -13,8 +13,9 @@ class DemoRunner {
     this.steps = [
       {
         time: 0,
-        title: "Initial Localization",
-        cue: "Camera sights passive AprilTag #1 at Office Entrance.",
+        stage: "Initial Localization",
+        title: "Initial localization",
+        cue: "Camera sights passive AprilTag #1 at office entrance.",
         action: (app) => {
           app.sendWebSocketMessage({ type: 'reset' });
           setTimeout(() => {
@@ -24,8 +25,9 @@ class DemoRunner {
       },
       {
         time: 8,
-        title: "Voice Destination Request",
-        cue: "User speaks: 'Take me to Meeting Room B'. Dijkstra computes shortest accessible path.",
+        stage: "Voice Destination Request",
+        title: "Voice destination request",
+        cue: "User speaks: 'Take me to Meeting Room B'. Shortest accessible path computed.",
         action: (app) => {
           app.sendWebSocketMessage({
             type: 'voice_command',
@@ -35,8 +37,9 @@ class DemoRunner {
       },
       {
         time: 18,
-        title: "Hazard Perception",
-        cue: "Computer Vision perceives unexpected obstacle (chair) in central corridor.",
+        stage: "Hazard Perception",
+        title: "Hazard perception",
+        cue: "Computer vision perceives unexpected obstacle (chair) in central corridor.",
         action: (app) => {
           app.sendWebSocketMessage({
             type: 'simulate_obstacle',
@@ -47,7 +50,8 @@ class DemoRunner {
       },
       {
         time: 27,
-        title: "Hazard Cleared",
+        stage: "Hazard Cleared",
+        title: "Hazard cleared",
         cue: "User navigates around chair. Corridor path is confirmed clear.",
         action: (app) => {
           app.sendWebSocketMessage({ type: 'clear_obstacle' });
@@ -55,23 +59,26 @@ class DemoRunner {
       },
       {
         time: 36,
-        title: "Elevator Landmark Checkpoint",
-        cue: "Camera passively identifies AprilTag #3 at Main Elevators checkpoint.",
+        stage: "Elevator Landmark Checkpoint",
+        title: "Elevator landmark checkpoint",
+        cue: "Camera passively identifies AprilTag #3 at main elevators checkpoint.",
         action: (app) => {
           app.sendWebSocketMessage({ type: 'simulate_tag', tag_id: 3 });
         }
       },
       {
         time: 46,
-        title: "Corridor Checkpoint",
-        cue: "Camera sights AprilTag #4 in East Wing Corridor.",
+        stage: "Corridor Checkpoint",
+        title: "Corridor checkpoint",
+        cue: "Camera sights AprilTag #4 in east wing corridor.",
         action: (app) => {
           app.sendWebSocketMessage({ type: 'simulate_tag', tag_id: 4 });
         }
       },
       {
         time: 55,
-        title: "Destination Arrival",
+        stage: "Destination Arrival",
+        title: "Destination arrival",
         cue: "Camera identifies AprilTag #12. Goal reached: Meeting Room B.",
         action: (app) => {
           app.sendWebSocketMessage({ type: 'simulate_tag', tag_id: 12 });
@@ -153,7 +160,7 @@ class DemoRunner {
       this.btnPlay.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Replay`;
     }
     if (this.cueBox) {
-      this.cueBox.innerHTML = `<strong>Demonstration Complete:</strong> Successfully arrived at Meeting Room B without visual reliance.`;
+      this.cueBox.innerHTML = `<strong>Demonstration complete:</strong> Successfully arrived at Meeting Room B without visual reliance.`;
     }
   }
 
@@ -164,9 +171,9 @@ class DemoRunner {
     this.updateTimerDisplay();
     if (this.progressBar) this.progressBar.style.width = '0%';
     if (this.btnPlay) {
-      this.btnPlay.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Play Scenario`;
+      this.btnPlay.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Play scenario`;
     }
-    if (this.cueBox) this.cueBox.textContent = 'Ready for evaluation. Click "Play Scenario" for automated 60-second accessible navigation journey.';
+    if (this.cueBox) this.cueBox.textContent = 'Ready for evaluation. Click "Play scenario" for automated 60-second accessible navigation journey.';
     if (window.antApp) {
       window.antApp.sendWebSocketMessage({ type: 'reset' });
     }
