@@ -1,7 +1,7 @@
 project:
   name: ANT
   status: in_progress
-  current_milestone: M2
+  current_milestone: M3
 
 features:
   project_foundation:
@@ -26,23 +26,23 @@ features:
     milestone: M1
 
   apriltag_localization:
-    status: IN_PROGRESS
-    implementation: "backend/app/vision/camera.py, backend/app/vision/detector.py, backend/app/vision/mapper.py"
+    status: COMPLETE
+    implementation: "backend/app/vision/camera.py, backend/app/vision/detector.py, backend/app/vision/mapper.py, backend/app/vision/tag_generator.py"
     tests: "tests/test_apriltag.py"
-    review: false
+    review: true
     milestone: M2
 
   voice_input:
-    status: NOT_STARTED
-    implementation: null
-    tests: null
+    status: IN_PROGRESS
+    implementation: "backend/app/audio/service.py"
+    tests: "tests/test_audio.py"
     review: false
     milestone: M3
 
   text_to_speech:
-    status: NOT_STARTED
-    implementation: null
-    tests: null
+    status: IN_PROGRESS
+    implementation: "backend/app/audio/service.py"
+    tests: "tests/test_audio.py"
     review: false
     milestone: M3
 

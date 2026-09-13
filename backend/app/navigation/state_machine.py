@@ -110,7 +110,6 @@ class NavigationStateMachine:
     def on_tag_observed(self, tag_id: int) -> str:
         node = self.graph.get_node_by_tag(tag_id)
         if not node:
-            # Unknown tag - do not crash, announce or ignore
             return "Unrecognized landmark tag observed."
 
         # If we didn't know where we were
@@ -130,13 +129,18 @@ class NavigationStateMachine:
             self.last_instruction = InstructionGenerator.announce_arrival(node)
             return self.last_instruction
 
-        # Check if this matches upcoming step in active route
-        if self.active_route and self.current_step_index < len(self.active_route.steps):
-            expected_step = self.active_route.steps[self.current_step_index]
-            if node.id == expected_step.to_node.id:
-                # Checkpoint reached!
+        # Check if this node is along the active route ahead of current position
+        if self.active_route:
+            # Check if matching any forward step destination
+            matched_step_idx = None
+            for idx in range(self.current_step_index, len(self.active_route.steps)):
+                if self.active_route.steps[idx].to_node.id == node.id:
+                    matched_step_idx = idx
+                    break
+
+            if matched_step_idx is not None:
                 self.current_node = node
-                self.current_step_index += 1
+                self.current_step_index = matched_step_idx + 1
                 self.current_state = NavigationState.AT_CHECKPOINT
 
                 if self.current_step_index < len(self.active_route.steps):
@@ -148,7 +152,7 @@ class NavigationStateMachine:
 
                 return self.last_instruction
 
-        # Observed a different valid node along the path or nearby
+        # Observed a different valid node not directly on forward path
         self.current_node = node
         self.last_instruction = InstructionGenerator.announce_location(node)
         return self.last_instruction
